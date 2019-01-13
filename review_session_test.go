@@ -26,11 +26,18 @@ func TestReviewSession(t *testing.T) {
 	s, err := NewReviewSession(deck, db, 2)
 	require.NoError(t, err)
 
+	assert.Equal(t, "test", s.DeckName())
 	assert.Equal(t, 2, s.Total())
 	assert.Equal(t, 2, s.Left())
 
 	q1 := s.Next()
 	assert.Equal(t, q1, s.Next())
+
+	if q1 == "foo" {
+		assert.Equal(t, "bar", s.CorrectAnswer())
+	} else {
+		assert.Equal(t, "baz", s.CorrectAnswer())
+	}
 
 	correct, err := s.Answer("123")
 	require.NoError(t, err)
@@ -39,29 +46,17 @@ func TestReviewSession(t *testing.T) {
 
 	q2 := s.Next()
 	assert.NotEqual(t, q1, s.Next())
-	if q2 == "bar" {
-		correct, err = s.Answer("baz")
-	} else {
-		correct, err = s.Answer("bar")
-	}
+	correct, err = s.Answer(s.CorrectAnswer())
 	require.NoError(t, err)
 	assert.True(t, correct)
 	assert.Equal(t, 1, s.Left())
 
 	for i := 0; i < 4; i++ {
-		if q1 == "foo" {
-			correct, err = s.Answer("baz")
-		} else {
-			correct, err = s.Answer("bar")
-		}
+		s.Answer("123")
 	}
 	assert.Equal(t, 1, s.Left())
 
-	if q1 == "foo" {
-		correct, err = s.Answer("bar")
-	} else {
-		correct, err = s.Answer("baz")
-	}
+	correct, err = s.Answer(s.CorrectAnswer())
 	require.NoError(t, err)
 	assert.True(t, correct)
 	assert.Equal(t, 0, s.Left())

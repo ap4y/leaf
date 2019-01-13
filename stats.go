@@ -9,7 +9,8 @@ type Stats struct {
 	LastReviewedAt time.Time
 	Difficulty     float64
 	Interval       float64
-	initial        bool
+
+	initial bool
 }
 
 func DefaultStats() *Stats {

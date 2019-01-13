@@ -5,15 +5,17 @@ import (
 	"fmt"
 	"math"
 	"sort"
+	"time"
 )
 
 type ReviewSession struct {
-	deck     *Deck
-	stats    map[string]*Stats
-	queue    []string
-	mistakes map[string]int
-	db       *StatsDB
-	total    int
+	deck      *Deck
+	stats     map[string]*Stats
+	queue     []string
+	mistakes  map[string]int
+	db        *StatsDB
+	total     int
+	startedAt time.Time
 }
 
 type reviewedCard struct {
@@ -49,8 +51,8 @@ func NewReviewSession(deck *Deck, db *StatsDB, total int) (*ReviewSession, error
 	stack := make(Stack)
 	queue := []string{}
 	mistakes := make(map[string]int)
-	for idx, rCard := range rCards {
-		if idx == total {
+	for _, rCard := range rCards {
+		if len(queue) == total {
 			break
 		}
 
@@ -64,7 +66,15 @@ func NewReviewSession(deck *Deck, db *StatsDB, total int) (*ReviewSession, error
 		mistakes[rCard.card] = 0
 	}
 
-	return &ReviewSession{deck, s, queue, mistakes, db, len(queue)}, nil
+	return &ReviewSession{deck, s, queue, mistakes, db, len(queue), time.Now()}, nil
+}
+
+func (s *ReviewSession) DeckName() string {
+	return s.deck.Name
+}
+
+func (s *ReviewSession) StartedAt() time.Time {
+	return s.startedAt
 }
 
 func (s *ReviewSession) Total() int {
@@ -81,6 +91,16 @@ func (s *ReviewSession) Next() string {
 	}
 
 	return s.queue[0]
+}
+
+func (s *ReviewSession) CorrectAnswer() string {
+	question := s.Next()
+	card := s.deck.Cards[question]
+	if card == nil {
+		return ""
+	}
+
+	return card.Answer()
 }
 
 func (s *ReviewSession) Answer(answer string) (bool, error) {
