@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"strings"
-	"unicode/utf8"
 
+	runewidth "github.com/mattn/go-runewidth"
 	termbox "github.com/nsf/termbox-go"
 )
 
@@ -49,11 +49,11 @@ func (ui *UI) Render() {
 		return
 	}
 
-	write(fmt.Sprintf("%s", ui.Question), w/2, h/2-4, AlignCenter, termbox.ColorYellow|termbox.AttrBold, 0)
+	write(ui.Question, w/2, h/2-4, AlignCenter, termbox.ColorYellow|termbox.AttrBold, 0)
 	write("(type answer below)", w/2, h/2-3, AlignCenter, 0, 0)
 
 	answer := ui.Answer
-	x := (w / 2) - (utf8.RuneCountInString(answer) / 2)
+	x := (w / 2) - (runewidth.StringWidth(answer) / 2)
 	inputBox := []rune{}
 	for _, ch := range answer {
 		if ch == ' ' {
@@ -79,17 +79,18 @@ func (ui *UI) Render() {
 }
 
 func write(text string, x, y int, align Align, fg, bg termbox.Attribute) {
+	var xOffset int
 	switch align {
 	case AlignLeft:
-		x = x
+		xOffset = x
 	case AlignCenter:
-		x = x - utf8.RuneCountInString(text)/2
+		xOffset = x - runewidth.StringWidth(text)/2
 	case AlignRight:
-		x = x - utf8.RuneCountInString(text)
+		xOffset = x - runewidth.StringWidth(text)
 	}
 
 	for _, c := range text {
-		termbox.SetCell(x, y, c, fg, bg)
-		x++
+		termbox.SetCell(xOffset, y, c, fg, bg)
+		xOffset += runewidth.RuneWidth(c)
 	}
 }
