@@ -78,7 +78,9 @@ func main() {
 			if ev.Key == termbox.KeyEnter {
 				resolveAnswer(ui, session)
 			} else if ev.Key == termbox.KeyBackspace || ev.Key == termbox.KeyBackspace2 {
-				ui.UserInput = ui.UserInput[:len(ui.UserInput)-1]
+				if len(ui.UserInput) > 0 {
+					ui.UserInput = ui.UserInput[:len(ui.UserInput)-1]
+				}
 			} else {
 				var ch rune
 				if ev.Key == termbox.KeySpace {
