@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 
 	"github.com/ap4y/leaf"
@@ -11,6 +12,7 @@ import (
 var (
 	db    = flag.String("db", "leaf.db", "database location")
 	count = flag.Int("count", 20, "cards to review")
+	stats = flag.Bool("stats", false, "show deck stats")
 )
 
 func main() {
@@ -32,6 +34,14 @@ func main() {
 	}
 
 	defer db.Close()
+
+	if *stats {
+		fmt.Printf("Card\tDifficulty\tInterval\n")
+		db.GetStats(deck.Name, func(card string, stats *leaf.Stats) {
+			fmt.Printf("%s\t%.1f\t\t%.1f\n", card, stats.Difficulty, stats.Interval)
+		})
+		return
+	}
 
 	session, err := leaf.NewReviewSession(deck, db, *count)
 	if err != nil {
