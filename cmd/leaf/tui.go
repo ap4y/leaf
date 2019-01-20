@@ -8,6 +8,14 @@ import (
 	termbox "github.com/nsf/termbox-go"
 )
 
+type step int
+
+const (
+	stepAnswering step = iota
+	stepScore
+	stepFinished
+)
+
 type align int
 
 const (
@@ -18,7 +26,10 @@ const (
 
 // TUI implements terminal UI.
 type TUI struct {
-	userInput []rune
+	userInput   []rune
+	step        step
+	prevResult  bool
+	prevCorrect string
 }
 
 // NewTUI construct a new TUI instance.
@@ -28,6 +39,10 @@ func NewTUI() *TUI {
 
 // Render renders current ui state using termbox.
 func (ui *TUI) Render(s *SessionState) error {
+	if s.Total == 0 {
+		ui.step = stepFinished
+	}
+
 	ui.draw(s)
 
 	for {
@@ -38,17 +53,24 @@ func (ui *TUI) Render(s *SessionState) error {
 				return nil
 			}
 
-			if s.Step == StepFinished {
+			if ui.step == stepFinished {
 				break
 			}
 
-			if s.Step == StepScore {
-				s.advance()
+			if ui.step == stepScore {
+				s.Advance()
+				if s.session.Left() == 0 {
+					ui.step = stepFinished
+				} else {
+					ui.step = stepAnswering
+				}
+
 				break
 			}
 
 			if ev.Key == termbox.KeyEnter {
-				s.resolveAnswer(string(ui.userInput))
+				ui.prevResult, ui.prevCorrect = s.ResolveAnswer(string(ui.userInput))
+				ui.step = stepScore
 				ui.userInput = make([]rune, 0)
 			} else if ev.Key == termbox.KeyBackspace || ev.Key == termbox.KeyBackspace2 {
 				if len(ui.userInput) > 0 {
@@ -81,7 +103,7 @@ func (ui *TUI) draw(s *SessionState) {
 	write(fmt.Sprintf("    Deck: %s", s.DeckName), 1, 1, 0, 0, 0)
 	write(fmt.Sprintf("Progress: %d/%d", s.Total-s.Left, s.Total), 1, 2, 0, 0, 0)
 
-	if s.Step == StepFinished {
+	if ui.step == stepFinished {
 		write("no more cards!", w/2, h/2-4, alignCenter, termbox.ColorGreen, 0)
 		return
 	}
@@ -89,24 +111,23 @@ func (ui *TUI) draw(s *SessionState) {
 	write(s.Question, w/2, h/2-4, alignCenter, termbox.ColorYellow|termbox.AttrBold, 0)
 	write("(type answer below)", w/2, h/2-3, alignCenter, 0, 0)
 
-	answer := s.Answer
-	x := (w / 2) - (runewidth.StringWidth(answer) / 2)
+	x := (w / 2) - (s.AnswerLen / 2)
 	inputBox := []rune{}
-	for range answer {
+	for i := 0; i < s.AnswerLen; i++ {
 		inputBox = append(inputBox, '_')
 	}
 	write(string(inputBox)+string('⏎'), x, h/2, 0, termbox.ColorWhite, 0)
 
-	switch s.Step {
-	case StepAnswering:
+	switch ui.step {
+	case stepAnswering:
 		input := strings.Replace(string(ui.userInput), " ", "␣", -1)
 		write(input, x, h/2, 0, termbox.ColorGreen, 0)
-	case StepScore:
-		if s.Result {
+	case stepScore:
+		if ui.prevResult {
 			write("✓", w/2, (h/2)+2, alignCenter, termbox.ColorGreen|termbox.AttrBold, 0)
 		} else {
 			write("✕", w/2, (h/2)+2, alignCenter, termbox.ColorRed|termbox.AttrBold, 0)
-			write(answer, w/2, (h/2)+3, alignCenter, termbox.ColorWhite, 0)
+			write(ui.prevCorrect, w/2, (h/2)+3, alignCenter, termbox.ColorWhite, 0)
 		}
 	}
 }

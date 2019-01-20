@@ -1,0 +1,53 @@
+header h5 {
+  margin: 0.5em 0;
+}
+
+main {
+  height: 100vh;
+  max-height: 38em;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.session {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.session h1 {
+  margin-bottom: 2em;
+  font-weight: normal;
+  font-size: 3em;
+}
+
+.session form {
+  display: flex;
+  margin-bottom: 1em;
+}
+
+.session input {
+  padding: 0.5em;
+  margin: 0;
+}
+
+.session #input {
+  background: none;
+  border: none;
+  font-family: monospace;
+}
+
+.result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.result p {
+  margin: 0;
+}
+
+.finished {
+  text-align: center;
+}

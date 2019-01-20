@@ -1,63 +1,49 @@
 package main
 
-import "github.com/ap4y/leaf"
+import (
+	"github.com/ap4y/leaf"
+)
 
 // UI renders session state.
 type UI interface {
-	Render(state *SessionState)
+	Render(state *SessionState) error
 }
-
-// Step defines step of the ReviewSession.
-type Step int
-
-const (
-	// StepAnswering defines step at which Session is awaiting for answer.
-	StepAnswering Step = iota
-	// StepScore defines step at which Session is showing score for an answer.
-	StepScore
-	// StepFinished defines step for a finished Session.
-	StepFinished
-)
 
 // SessionState state holds public state of the ReviewSession.
 type SessionState struct {
-	Step     Step
-	DeckName string
-	Total    int
-	Left     int
-	Question string
-	Answer   string
-	Result   bool
+	DeckName  string `json:"deck"`
+	Total     int    `json:"total"`
+	Left      int    `json:"left"`
+	Question  string `json:"question"`
+	AnswerLen int    `json:"answerLen"`
 
 	session *leaf.ReviewSession
 }
 
 // NewSessionState constructs a new SessionState.
 func NewSessionState(session *leaf.ReviewSession) *SessionState {
-	return &SessionState{
-		DeckName: session.DeckName(),
-		Total:    session.Total(),
-		Left:     session.Left(),
-		Question: session.Next(),
-		Answer:   session.CorrectAnswer(),
-		session:  session,
+	s := &SessionState{
+		DeckName:  session.DeckName(),
+		Total:     session.Total(),
+		Left:      session.Left(),
+		Question:  session.Next(),
+		AnswerLen: len(session.CorrectAnswer()),
+		session:   session,
 	}
+
+	return s
 }
 
-func (s *SessionState) resolveAnswer(userInput string) {
-	s.Result, _ = s.session.Answer(userInput)
-	s.Step = StepScore
+// ResolveAnswer submits answer to a session.
+func (s *SessionState) ResolveAnswer(userInput string) (isCorrect bool, correctAnswer string) {
+	correctAnswer = s.session.CorrectAnswer()
+	isCorrect, _ = s.session.Answer(userInput)
 	s.Left = s.session.Left()
+	return isCorrect, correctAnswer
 }
 
-func (s *SessionState) advance() {
-	if s.session.Left() == 0 {
-		s.Step = StepFinished
-		return
-	}
-
-	s.Step = StepAnswering
+// Advance fetches next question if available or sets session to finished otherwise.
+func (s *SessionState) Advance() {
 	s.Question = s.session.Next()
-	s.Answer = s.session.CorrectAnswer()
-	return
+	s.AnswerLen = len(s.session.CorrectAnswer())
 }

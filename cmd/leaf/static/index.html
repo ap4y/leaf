@@ -1,0 +1,40 @@
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+
+    <title>Deck App</title>
+    <link rel="stylesheet" href="sakura.css" type="text/css">
+    <link rel="stylesheet" href="main.css" type="text/css">
+  </head>
+
+  <body>
+    <header>
+      <h5>    Deck: <span id="deck"></span></h5>
+      <h5>Progress: <span id="progress"></span></h5>
+    </header>
+
+    <main>
+      <div id="session" class="session">
+        <h1 id="question"></h1>
+
+        <form id="inputForm">
+          <input id="input" autofocus autocomplete="off"/>
+          <input type="submit" value="⏎" />
+        </form>
+
+        <div id="result" class="result">
+          <p id="answerState"></p>
+          <p id="correctAnswer"></p>
+        </div>
+      </div>
+
+      <div id="finished" class="finished">
+        <h2>no more cards!</h2>
+      </div>
+    </main>
+  </body>
+
+  <script src="main.js"></script>
+</html>
