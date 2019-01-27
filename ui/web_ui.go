@@ -1,5 +1,5 @@
 //go:generate esc -o static.go -prefix static static
-package main
+package ui
 
 import (
 	"encoding/json"

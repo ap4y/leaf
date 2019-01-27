@@ -8,6 +8,7 @@ import (
 	"text/tabwriter"
 
 	"github.com/ap4y/leaf"
+	"github.com/ap4y/leaf/ui"
 	termbox "github.com/nsf/termbox-go"
 )
 
@@ -30,7 +31,7 @@ func main() {
 		log.Fatal("Failed to open deck: ", err)
 	}
 
-	db, err := leaf.OpenStatsDB(*db)
+	db, err := leaf.OpenBoltStore(*db)
 	if err != nil {
 		log.Fatal("Failed to open stats DB: ", err)
 	}
@@ -51,19 +52,19 @@ func main() {
 			log.Fatal("Failed to create review session: ", err)
 		}
 
-		var ui UI
+		var u ui.UI
 		if flag.Arg(0) == "web" {
-			ui = NewWebUI(*addr)
+			u = ui.NewWebUI(*addr)
 		} else {
 			if err := termbox.Init(); err != nil {
 				log.Fatal("Failed to initialise tui: ", err)
 			}
 			defer termbox.Close()
 
-			ui = NewTUI()
+			u = ui.NewTUI()
 		}
 
-		if err := ui.Render(NewSessionState(session)); err != nil {
+		if err := u.Render(ui.NewSessionState(session)); err != nil {
 			log.Fatal("Failed to render: ", err)
 		}
 	default:
