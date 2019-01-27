@@ -14,7 +14,7 @@ func TestStatsDB(t *testing.T) {
 	require.NoError(t, err)
 	defer os.Remove(tmpfile.Name())
 
-	db, err := OpenStatsDB(tmpfile.Name())
+	db, err := OpenBoltStore(tmpfile.Name())
 	require.NoError(t, err)
 
 	s1 := Stats{Difficulty: 1}
