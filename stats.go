@@ -5,6 +5,8 @@ import (
 	"time"
 )
 
+const ratingSuccess = 0.8
+
 type Stats struct {
 	LastReviewedAt time.Time
 	Difficulty     float64
@@ -33,7 +35,7 @@ func (s *Stats) PercentOverdue() float64 {
 
 func (s *Stats) Record(rating float64) float64 {
 	s.initial = false
-	success := rating >= 0.6
+	success := rating >= ratingSuccess
 	percentOverdue := float64(1)
 	if success {
 		percentOverdue = s.PercentOverdue()

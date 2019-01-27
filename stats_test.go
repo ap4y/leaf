@@ -32,10 +32,10 @@ func TestPercentOverdue(t *testing.T) {
 func TestRecord(t *testing.T) {
 	results := [][]float64{
 		{0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2},
-		{0.2, 0.42, 0.84, 1.62, 2.99, 5.22, 8.67, 13.63, 20.21},
+		{0.2, 0.43, 0.92, 1.94, 4.05, 8.32, 16.87, 33.74, 66.55},
 		{0.2, 0.44, 1, 2.3, 5.35, 12.63, 30.25, 73.45, 180.83},
 	}
-	for idx, rating := range []float64{0.5, 0.6, 1.0} {
+	for idx, rating := range []float64{0.6, 0.8, 1.0} {
 		t.Run(fmt.Sprintf("%f", rating), func(t *testing.T) {
 			s := DefaultStats()
 			intervals := []float64{}
