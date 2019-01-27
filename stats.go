@@ -7,6 +7,7 @@ import (
 
 const ratingSuccess = 0.8
 
+// Stats store SM2+ parameters for a Card.
 type Stats struct {
 	LastReviewedAt time.Time
 	Difficulty     float64
@@ -15,10 +16,12 @@ type Stats struct {
 	initial bool
 }
 
+// DefaultStats returns a new Stats initialized with default values.
 func DefaultStats() *Stats {
 	return &Stats{time.Now(), 0.3, 1, true}
 }
 
+// IsReady signals whether card is read for review.
 func (s *Stats) IsReady() bool {
 	if s.initial {
 		return true
@@ -28,11 +31,13 @@ func (s *Stats) IsReady() bool {
 	return nextReviewAt.Before(time.Now())
 }
 
+// PercentOverdue returns corresponding SM2+ value for a Card.
 func (s *Stats) PercentOverdue() float64 {
 	percentOverdue := time.Now().Sub(s.LastReviewedAt).Hours() / float64(24*s.Interval)
 	return math.Min(2, percentOverdue)
 }
 
+// Record advances SM2+ state for a card.
 func (s *Stats) Record(rating float64) float64 {
 	s.initial = false
 	success := rating >= ratingSuccess

@@ -3,24 +3,35 @@ package leaf
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 
 	bolt "go.etcd.io/bbolt"
 )
 
-type StatsDB struct {
+// StatsStore defines storage interface that is used for storing review stats.
+type StatsStore interface {
+	io.Closer
+	// GetStats iterates over all stats in a Store.
+	GetStats(deck string, rangeFunc func(card string, stats *Stats)) error
+	// SaveStats saves stats for a card.
+	SaveStats(deck string, card string, stats *Stats) error
+}
+
+type boltStore struct {
 	bolt *bolt.DB
 }
 
-func OpenStatsDB(filename string) (*StatsDB, error) {
+// OpenBoltStore returns a new StatsStore implemented on top of BoltDB.
+func OpenBoltStore(filename string) (StatsStore, error) {
 	db, err := bolt.Open(filename, 0600, nil)
 	if err != nil {
 		return nil, fmt.Errorf("db: %s", db)
 	}
 
-	return &StatsDB{db}, nil
+	return &boltStore{db}, nil
 }
 
-func (db *StatsDB) GetStats(deck string, rangeFunc func(card string, stats *Stats)) error {
+func (db *boltStore) GetStats(deck string, rangeFunc func(card string, stats *Stats)) error {
 	return db.bolt.Update(func(tx *bolt.Tx) error {
 		b, err := tx.CreateBucketIfNotExists([]byte(deck))
 		if err != nil {
@@ -41,7 +52,7 @@ func (db *StatsDB) GetStats(deck string, rangeFunc func(card string, stats *Stat
 	})
 }
 
-func (db *StatsDB) SaveStats(deck string, card string, stats *Stats) error {
+func (db *boltStore) SaveStats(deck string, card string, stats *Stats) error {
 	return db.bolt.Update(func(tx *bolt.Tx) error {
 		b, err := tx.CreateBucketIfNotExists([]byte(deck))
 		if err != nil {
@@ -57,6 +68,6 @@ func (db *StatsDB) SaveStats(deck string, card string, stats *Stats) error {
 	})
 }
 
-func (db *StatsDB) Close() error {
+func (db *boltStore) Close() error {
 	return db.bolt.Close()
 }

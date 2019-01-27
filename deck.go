@@ -7,19 +7,29 @@ import (
 	"strings"
 )
 
+// Card represents a single card in a Deck. Each card may have
+// multiple sides (answers).
 type Card []string
 
+// Answer returns combined space separated answer for all sides of the card.
 func (c Card) Answer() string {
 	return strings.Join(c, " ")
 }
 
+// Stack represents collection of card with corresponding questions.
 type Stack map[string]Card
 
+// Deck represents a named collection of the cards to review.
 type Deck struct {
 	Name  string
 	Cards Stack
 }
 
+// OpenDeck loads deck from an org file. File format is:
+// * Deck Name
+// ** Question
+// side 1
+// side 2
 func OpenDeck(filename string) (*Deck, error) {
 	f, err := os.Open(filename)
 	if err != nil {
