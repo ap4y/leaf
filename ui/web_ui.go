@@ -1,4 +1,4 @@
-//go:generate esc -o static.go -prefix static static
+//go:generate esc -o ui/static.go -prefix ui/static -pkg ui ui/static
 package ui
 
 import (
@@ -6,6 +6,9 @@ import (
 	"log"
 	"net/http"
 )
+
+// DevMode makes WebUI to use local static files.
+var DevMode = false
 
 // WebUI implements web UI.
 type WebUI struct {
@@ -20,7 +23,7 @@ func NewWebUI(addr string) *WebUI {
 // Handler returns net.Handler for provided session state.
 func (ui *WebUI) Handler(s *SessionState) http.Handler {
 	mux := http.NewServeMux()
-	mux.Handle("/", http.FileServer(FS(false)))
+	mux.Handle("/", http.FileServer(FS(DevMode)))
 	mux.HandleFunc("/next", nextHandler(s))
 	mux.HandleFunc("/resolve", resolveHandler(s))
 

@@ -13,13 +13,16 @@ import (
 )
 
 var (
-	db    = flag.String("db", "leaf.db", "database location")
-	count = flag.Int("count", 20, "cards to review")
-	addr  = flag.String("addr", ":8080", "addr for Web UI")
+	db      = flag.String("db", "leaf.db", "database location")
+	count   = flag.Int("count", 20, "cards to review")
+	addr    = flag.String("addr", ":8080", "addr for Web UI")
+	devMode = flag.Bool("dev", false, "use local dev assets")
 )
 
 func main() {
 	flag.Parse()
+
+	ui.DevMode = *devMode
 
 	deckFile := flag.Arg(1)
 	if deckFile == "" {
