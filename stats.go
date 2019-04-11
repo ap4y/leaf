@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-const ratingSuccess = 0.8
+const ratingSuccess = 0.6
 
 // Stats store SM2+ parameters for a Card.
 type Stats struct {
@@ -18,7 +18,7 @@ type Stats struct {
 
 // DefaultStats returns a new Stats initialized with default values.
 func DefaultStats() *Stats {
-	return &Stats{time.Now(), 0.3, 1, true}
+	return &Stats{time.Now(), 0.3, 0.2, true}
 }
 
 // IsReady signals whether card is read for review.
@@ -50,9 +50,10 @@ func (s *Stats) Record(rating float64) float64 {
 	s.Difficulty = math.Max(0, math.Min(1, s.Difficulty))
 	difficultyWeight := 3.5 - 1.7*s.Difficulty
 
-	minInterval := 0.2
+	minInterval := math.Min(1.0, s.Interval)
 	factor := minInterval / math.Pow(difficultyWeight, 2)
 	if success {
+		minInterval = 0.2
 		factor = minInterval + (difficultyWeight-1)*percentOverdue
 	}
 

@@ -140,5 +140,9 @@ func (s *ReviewSession) Answer(answer string) (bool, error) {
 
 func (s *ReviewSession) rating(question string) float64 {
 	miss := float64(s.mistakes[question])
-	return math.Max(0, 1-miss/5)
+	if miss == 0 {
+		return 1
+	}
+
+	return math.Max(0, 0.79-miss/5)
 }

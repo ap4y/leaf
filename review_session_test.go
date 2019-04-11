@@ -82,7 +82,7 @@ func TestRating(t *testing.T) {
 	tcs := []struct {
 		mistakes int
 		rating   float64
-	}{{0, 1}, {1, 0.8}, {2, 0.6}, {3, 0.4}, {4, 0.19}, {5, 0}, {6, 0}}
+	}{{0, 1}, {1, 0.59}, {2, 0.39}, {3, 0.19}, {4, 0}, {5, 0}, {6, 0}}
 	for _, tc := range tcs {
 		t.Run(fmt.Sprintf("%d", tc.mistakes), func(t *testing.T) {
 			s := &ReviewSession{mistakes: map[string]int{"foo": tc.mistakes}}
