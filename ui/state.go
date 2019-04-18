@@ -6,12 +6,11 @@ import (
 
 // UI renders session state.
 type UI interface {
-	Render(state *SessionState) error
+	Render() error
 }
 
 // SessionState state holds public state of the ReviewSession.
 type SessionState struct {
-	DeckName  string `json:"deck"`
 	Total     int    `json:"total"`
 	Left      int    `json:"left"`
 	Question  string `json:"question"`
@@ -23,7 +22,6 @@ type SessionState struct {
 // NewSessionState constructs a new SessionState.
 func NewSessionState(session *leaf.ReviewSession) *SessionState {
 	s := &SessionState{
-		DeckName:  session.DeckName(),
 		Total:     session.Total(),
 		Left:      session.Left(),
 		Question:  session.Next(),

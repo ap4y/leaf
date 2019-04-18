@@ -5,35 +5,39 @@
     <meta charset="utf-8">
 
     <title>Deck App</title>
-    <link rel="stylesheet" href="sakura.css" type="text/css">
+    <link rel="stylesheet" href="grt.css" type="text/css">
     <link rel="stylesheet" href="main.css" type="text/css">
   </head>
 
-  <body>
-    <header>
-      <h5>    Deck: <span id="deck"></span></h5>
-      <h5>Progress: <span id="progress"></span></h5>
-    </header>
+  <body class="grt">
+    <nav id="decks" class="container">
+      <h1>Decks:</h1>
+      <ul id="deckList" class="deck-list"></ul>
+    </nav>
 
-    <main>
-      <div id="session" class="session">
-        <h1 id="question"></h1>
+    <div id="session">
+      <header>
+        <h3>
+          Deck: <span id="deck"></span>
+          <br>
+          Progress: <span id="progress"></span>
+        </h3>
+      </header>
+
+      <main class="session container">
+        <h1 id="question" class="title"></h1>
 
         <form id="inputForm">
           <input id="input" autofocus autocomplete="off"/>
           <input type="submit" value="⏎" />
         </form>
 
-        <div id="result" class="result">
-          <p id="answerState"></p>
-          <p id="correctAnswer"></p>
-        </div>
-      </div>
-
-      <div id="finished" class="finished">
-        <h2>no more cards!</h2>
-      </div>
-    </main>
+        <p id="result" class="result">
+          <span id="answerState">&nbsp</span>
+          <span id="correctAnswer">&nbsp</span>
+        </p>
+      </main>
+    </div>
   </body>
 
   <script src="main.js"></script>
