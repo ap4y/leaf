@@ -16,9 +16,24 @@ type Stats struct {
 	initial bool
 }
 
+// CardWithStats joins Stats to a Card
+type CardWithStats struct {
+	Card
+	*Stats
+}
+
 // DefaultStats returns a new Stats initialized with default values.
 func DefaultStats() *Stats {
 	return &Stats{time.Now(), 0.3, 0.2, true}
+}
+
+// NextReviewAt returns next review timestamp for a card.
+func (s *Stats) NextReviewAt() time.Time {
+	if s.initial {
+		return time.Now()
+	}
+
+	return s.LastReviewedAt.Add(time.Duration(24*s.Interval) * time.Hour)
 }
 
 // IsReady signals whether card is read for review.
@@ -27,8 +42,7 @@ func (s *Stats) IsReady() bool {
 		return true
 	}
 
-	nextReviewAt := s.LastReviewedAt.Add(time.Duration(24*s.Interval) * time.Hour)
-	return nextReviewAt.Before(time.Now())
+	return s.NextReviewAt().Before(time.Now())
 }
 
 // PercentOverdue returns corresponding SM2+ value for a Card.

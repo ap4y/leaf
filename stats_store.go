@@ -11,8 +11,8 @@ import (
 // StatsStore defines storage interface that is used for storing review stats.
 type StatsStore interface {
 	io.Closer
-	// GetStats iterates over all stats in a Store.
-	GetStats(deck string, rangeFunc func(card string, stats *Stats)) error
+	// RangeStats iterates over all stats in a Store.
+	RangeStats(deck string, rangeFunc func(card string, stats *Stats) bool) error
 	// SaveStats saves stats for a card.
 	SaveStats(deck string, card string, stats *Stats) error
 }
@@ -31,7 +31,7 @@ func OpenBoltStore(filename string) (StatsStore, error) {
 	return &boltStore{db}, nil
 }
 
-func (db *boltStore) GetStats(deck string, rangeFunc func(card string, stats *Stats)) error {
+func (db *boltStore) RangeStats(deck string, rangeFunc func(card string, stats *Stats) bool) error {
 	return db.bolt.Update(func(tx *bolt.Tx) error {
 		b, err := tx.CreateBucketIfNotExists([]byte(deck))
 		if err != nil {
@@ -44,7 +44,10 @@ func (db *boltStore) GetStats(deck string, rangeFunc func(card string, stats *St
 				return fmt.Errorf("json: %s", err)
 			}
 
-			rangeFunc(string(card), s)
+			if !rangeFunc(string(card), s) {
+				return nil
+			}
+
 			return nil
 		})
 

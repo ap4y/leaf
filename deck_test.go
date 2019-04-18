@@ -1,6 +1,7 @@
 package leaf
 
 import (
+	"sort"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -12,6 +13,11 @@ func TestOpenDeck(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, "Hiragana", deck.Name)
 	require.Len(t, deck.Cards, 46)
-	assert.Equal(t, Card{"a"}, deck.Cards["あ"])
-	assert.Equal(t, Card{"n"}, deck.Cards["ん"])
+
+	cards := deck.Cards
+	sort.Slice(cards, func(i, j int) bool {
+		return cards[i].Question > cards[j].Question
+	})
+	assert.Equal(t, "ん", cards[0].Question)
+	assert.Equal(t, "n", cards[0].Answer())
 }

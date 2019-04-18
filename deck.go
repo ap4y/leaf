@@ -9,20 +9,20 @@ import (
 
 // Card represents a single card in a Deck. Each card may have
 // multiple sides (answers).
-type Card []string
-
-// Answer returns combined space separated answer for all sides of the card.
-func (c Card) Answer() string {
-	return strings.Join(c, " ")
+type Card struct {
+	Question string
+	Sides    []string
 }
 
-// Stack represents collection of card with corresponding questions.
-type Stack map[string]Card
+// Answer returns combined space separated answer for all sides of the card.
+func (c *Card) Answer() string {
+	return strings.Join(c.Sides, " ")
+}
 
 // Deck represents a named collection of the cards to review.
 type Deck struct {
 	Name  string
-	Cards Stack
+	Cards []Card
 }
 
 // OpenDeck loads deck from an org file. File format is:
@@ -36,7 +36,8 @@ func OpenDeck(filename string) (*Deck, error) {
 		return nil, fmt.Errorf("file: %s", err)
 	}
 
-	deck := &Deck{Cards: make(Stack)}
+	deck := &Deck{}
+	cards := make(map[string][]string, 0)
 	scanner := bufio.NewScanner(f)
 	var question string
 	for scanner.Scan() {
@@ -45,9 +46,9 @@ func OpenDeck(filename string) (*Deck, error) {
 			deck.Name = strings.Replace(text, "* ", "", -1)
 		} else if strings.HasPrefix(text, "** ") {
 			question = strings.Replace(text, "** ", "", -1)
-			deck.Cards[question] = make([]string, 0)
+			cards[question] = make([]string, 0)
 		} else {
-			deck.Cards[question] = append(deck.Cards[question], text)
+			cards[question] = append(cards[question], text)
 		}
 	}
 
@@ -55,5 +56,8 @@ func OpenDeck(filename string) (*Deck, error) {
 		return nil, fmt.Errorf("scanner: %s", err)
 	}
 
+	for question, sides := range cards {
+		deck.Cards = append(deck.Cards, Card{question, sides})
+	}
 	return deck, nil
 }

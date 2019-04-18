@@ -28,9 +28,10 @@ func TestStatsDB(t *testing.T) {
 
 	cards := []string{}
 	stats := []Stats{}
-	err = db.GetStats("deck1", func(card string, s *Stats) {
+	err = db.RangeStats("deck1", func(card string, s *Stats) bool {
 		cards = append(cards, card)
 		stats = append(stats, *s)
+		return true
 	})
 	require.NoError(t, err)
 

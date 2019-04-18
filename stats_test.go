@@ -8,6 +8,19 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestNextReviewAt(t *testing.T) {
+	s := &Stats{LastReviewedAt: time.Unix(100, 0), Interval: 1}
+	assert.Equal(t, int64(86500), s.NextReviewAt().Unix())
+
+	s = &Stats{LastReviewedAt: time.Unix(100, 0).Add(-24 * time.Hour), Interval: 1}
+	assert.Equal(t, int64(100), s.NextReviewAt().Unix())
+
+	s = DefaultStats()
+	assert.InDelta(t, time.Now().Unix(), s.NextReviewAt().Unix(), 100)
+	s.Record(5)
+	assert.InDelta(t, time.Now().Add(4*time.Hour).Unix(), s.NextReviewAt().Unix(), 100)
+}
+
 func TestIsReady(t *testing.T) {
 	s := &Stats{LastReviewedAt: time.Now(), Interval: 1}
 	assert.False(t, s.IsReady())

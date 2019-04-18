@@ -2,79 +2,33 @@ package leaf
 
 import (
 	"errors"
-	"fmt"
 	"math"
-	"sort"
 	"time"
 )
 
+// StatsSaveFunc persists stats updates.
+type StatsSaveFunc func(question string, stats *Stats) error
+
 // ReviewSession contains parameters for a Deck review sessions.
 type ReviewSession struct {
-	deck      *Deck
-	stats     map[string]*Stats
-	queue     []string
-	mistakes  map[string]int
-	db        StatsStore
-	total     int
-	startedAt time.Time
+	statsSaver StatsSaveFunc
+	cards      []*CardWithStats
+	queue      []string
+	mistakes   map[string]int
+	startedAt  time.Time
 }
 
-type reviewedCard struct {
-	card           string
-	percentOverdue float64
-}
-
-// NewReviewSession constructs a new ReviewSession for a given deck
-// with a total amount of cards. Provided DB will be used for review stats.
-func NewReviewSession(deck *Deck, db StatsStore, total int) (*ReviewSession, error) {
-	rCards := []*reviewedCard{}
-	s := make(map[string]*Stats)
-	err := db.GetStats(deck.Name, func(card string, stats *Stats) {
-		rCards = append(rCards, &reviewedCard{card, stats.PercentOverdue()})
-		s[card] = stats
-	})
-	if err != nil {
-		return nil, fmt.Errorf("db: %s", err)
-	}
-
-	for card := range deck.Cards {
-		if s[card] != nil {
-			continue
-		}
-
-		stats := DefaultStats()
-		rCards = append(rCards, &reviewedCard{card, stats.PercentOverdue()})
-		s[card] = stats
-	}
-
-	sort.Slice(rCards, func(i, j int) bool {
-		return rCards[i].percentOverdue > rCards[j].percentOverdue
-	})
-
-	stack := make(Stack)
+// NewReviewSession constructs a new ReviewSession for a given set of cards.
+// Provided StatsSaveFunc will be used for stats updates post review.
+func NewReviewSession(cards []*CardWithStats, statsSaver StatsSaveFunc) *ReviewSession {
 	queue := []string{}
 	mistakes := make(map[string]int)
-	for _, rCard := range rCards {
-		if len(queue) == total {
-			break
-		}
-
-		stats := s[rCard.card]
-		if !stats.IsReady() {
-			continue
-		}
-
-		stack[rCard.card] = deck.Cards[rCard.card]
-		queue = append(queue, rCard.card)
-		mistakes[rCard.card] = 0
+	for _, card := range cards {
+		queue = append(queue, card.Question)
+		mistakes[card.Question] = 0
 	}
 
-	return &ReviewSession{deck, s, queue, mistakes, db, len(queue), time.Now()}, nil
-}
-
-// DeckName returns a name of the reviewed deck.
-func (s *ReviewSession) DeckName() string {
-	return s.deck.Name
+	return &ReviewSession{statsSaver, cards, queue, mistakes, time.Now()}
 }
 
 // StartedAt returns start time of the review session.
@@ -84,7 +38,7 @@ func (s *ReviewSession) StartedAt() time.Time {
 
 // Total returns amount of cards in the session.
 func (s *ReviewSession) Total() int {
-	return s.total
+	return len(s.cards)
 }
 
 // Left returns amount of cards left to review.
@@ -104,8 +58,7 @@ func (s *ReviewSession) Next() string {
 
 // CorrectAnswer returns correct answer for a current reviewed card.
 func (s *ReviewSession) CorrectAnswer() string {
-	question := s.Next()
-	card := s.deck.Cards[question]
+	card := s.currentCard()
 	if card == nil {
 		return ""
 	}
@@ -116,18 +69,17 @@ func (s *ReviewSession) CorrectAnswer() string {
 // Answer matches provided answer against correct and advances session.
 func (s *ReviewSession) Answer(answer string) (bool, error) {
 	question := s.Next()
-	card := s.deck.Cards[question]
+	card := s.currentCard()
 	if card == nil {
 		return false, errors.New("unknown card")
 	}
 
 	s.queue = s.queue[1:]
 	if answer == card.Answer() {
-		stats := s.stats[question]
 		rating := s.rating(question)
-		stats.Record(rating)
-		if err := s.db.SaveStats(s.deck.Name, question, stats); err != nil {
-			return false, fmt.Errorf("db: %s", err)
+		card.Record(rating)
+		if err := s.statsSaver(question, card.Stats); err != nil {
+			return false, err
 		}
 
 		return true, nil
@@ -145,4 +97,17 @@ func (s *ReviewSession) rating(question string) float64 {
 	}
 
 	return math.Max(0, 0.79-miss/5)
+}
+
+func (s *ReviewSession) currentCard() *CardWithStats {
+	question := s.Next()
+	var card *CardWithStats
+	for _, c := range s.cards {
+		if c.Question == question {
+			card = c
+			break
+		}
+	}
+
+	return card
 }
