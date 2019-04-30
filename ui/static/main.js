@@ -7,7 +7,7 @@ class DeckList {
         ({ name, cards_ready, next_review_at }) =>
           `<li>
     <a href="#${name}" onclick="app.startSession('${name}'); return false;">${name}</a>
-    <code>${this._reviewStats(cards_ready, new Date(next_review_at))}</code>
+    <div><code>${this._reviewStats(cards_ready, new Date(next_review_at))}</code></div>
 </li>`
       )
       .join("");
