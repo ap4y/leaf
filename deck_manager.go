@@ -83,6 +83,22 @@ func (dm *DeckManager) ReviewSession(deckName string, total int) (*ReviewSession
 	}), nil
 }
 
+func (dm *DeckManager) DeckStats(deckName string) ([]*CardWithStats, error) {
+	var deck *Deck
+	for _, d := range dm.decks {
+		if d.Name == deckName {
+			deck = d
+			break
+		}
+	}
+
+	if deck == nil {
+		return nil, ErrNotFound
+	}
+
+	return dm.deckStats(deck)
+}
+
 func (dm *DeckManager) deckStats(deck *Deck) ([]*CardWithStats, error) {
 	stats := make(map[string]*Stats)
 	err := dm.db.RangeStats(deck.Name, func(card string, s *Stats) bool {

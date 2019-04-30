@@ -51,4 +51,14 @@ func TestDeckManager(t *testing.T) {
 
 		require.NoError(t, err)
 	})
+
+	t.Run("DeckStats", func(t *testing.T) {
+		stats, err := dm.DeckStats("Hiragana")
+		require.NoError(t, err)
+		assert.Len(t, stats, 46)
+
+		s := stats[0]
+		assert.NotEmpty(t, s.Question)
+		assert.InDelta(t, 0.3, s.Difficulty, 0.01)
+	})
 }

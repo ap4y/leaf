@@ -26,6 +26,7 @@ const (
 
 // TUI implements terminal UI.
 type TUI struct {
+	deckName    string
 	userInput   []rune
 	step        step
 	prevResult  bool
@@ -33,8 +34,8 @@ type TUI struct {
 }
 
 // NewTUI construct a new TUI instance.
-func NewTUI() *TUI {
-	return &TUI{userInput: make([]rune, 0)}
+func NewTUI(deckName string) *TUI {
+	return &TUI{deckName: deckName, userInput: make([]rune, 0)}
 }
 
 // Render renders current ui state using termbox.
@@ -100,7 +101,7 @@ func (ui *TUI) draw(s *SessionState) {
 
 	w, h := termbox.Size()
 
-	write(fmt.Sprintf("    Deck: %s", s.DeckName), 1, 1, 0, 0, 0)
+	write(fmt.Sprintf("    Deck: %s", ui.deckName), 1, 1, 0, 0, 0)
 	write(fmt.Sprintf("Progress: %d/%d", s.Total-s.Left, s.Total), 1, 2, 0, 0, 0)
 
 	if ui.step == stepFinished {
