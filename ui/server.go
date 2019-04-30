@@ -11,47 +11,38 @@ import (
 	"github.com/ap4y/leaf"
 )
 
-// DevMode makes WebUI to use local static files.
-var DevMode = false
-
-// WebUI implements web UI.
-type WebUI struct {
-	addr         string
-	dm           *leaf.DeckManager
-	sessionState *SessionState
+// Server implements web ui for reviews.
+type Server struct {
+	dm             *leaf.DeckManager
+	cardsPerReview int
+	sessionState   *SessionState
 }
 
-// NewWebUI construct a new WebUI instance.
-func NewWebUI(addr string, dm *leaf.DeckManager) *WebUI {
-	return &WebUI{addr: addr, dm: dm}
+// NewServer construct a new Server instance.
+func NewServer(dm *leaf.DeckManager, cardsPerReview int) *Server {
+	return &Server{dm: dm, cardsPerReview: cardsPerReview}
 }
 
-// Handler returns net.Handler for provided session state.
-func (ui *WebUI) Handler() http.Handler {
+// Serve starts listening loop on addr.
+func (srv *Server) Serve(addr string, devMode bool) error {
 	mux := http.NewServeMux()
-	mux.Handle("/", http.FileServer(FS(DevMode)))
-	mux.HandleFunc("/decks", ui.listDecks)
-	mux.HandleFunc("/start/", ui.startReview)
-	mux.HandleFunc("/next", ui.nextHandler)
-	mux.HandleFunc("/resolve", ui.resolveHandler)
+	mux.Handle("/", http.FileServer(FS(devMode)))
+	mux.HandleFunc("/decks", srv.listDecks)
+	mux.HandleFunc("/start/", srv.startReview)
+	mux.HandleFunc("/next", srv.nextHandler)
+	mux.HandleFunc("/resolve", srv.resolveHandler)
 
-	return mux
+	log.Println("Serving HTTP on", addr)
+	return http.ListenAndServe(addr, mux)
 }
 
-// Render renders current ui state using termbox.
-func (ui *WebUI) Render() error {
-	mux := ui.Handler()
-	log.Println("Serving HTTP on", ui.addr)
-	return http.ListenAndServe(ui.addr, mux)
-}
-
-func (ui *WebUI) listDecks(w http.ResponseWriter, req *http.Request) {
+func (srv *Server) listDecks(w http.ResponseWriter, req *http.Request) {
 	if req.Method != http.MethodGet {
 		http.Error(w, "invalid method", http.StatusMethodNotAllowed)
 		return
 	}
 
-	decks, err := ui.dm.ReviewDecks(100)
+	decks, err := srv.dm.ReviewDecks(100)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 		return
@@ -62,49 +53,49 @@ func (ui *WebUI) listDecks(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func (ui *WebUI) startReview(w http.ResponseWriter, req *http.Request) {
+func (srv *Server) startReview(w http.ResponseWriter, req *http.Request) {
 	if req.Method != http.MethodPost {
 		http.Error(w, "invalid method", http.StatusMethodNotAllowed)
 		return
 	}
 
 	deckName := strings.Replace(req.URL.Path, "/start/", "", -1)
-	session, err := ui.dm.ReviewSession(deckName, 20)
+	session, err := srv.dm.ReviewSession(deckName, srv.cardsPerReview)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 		return
 	}
 
-	ui.sessionState = NewSessionState(session)
-	if err := json.NewEncoder(w).Encode(ui.sessionState); err != nil {
+	srv.sessionState = NewSessionState(session)
+	if err := json.NewEncoder(w).Encode(srv.sessionState); err != nil {
 		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 	}
 }
 
-func (ui *WebUI) nextHandler(w http.ResponseWriter, req *http.Request) {
+func (srv *Server) nextHandler(w http.ResponseWriter, req *http.Request) {
 	if req.Method != http.MethodGet {
 		http.Error(w, "invalid method", http.StatusMethodNotAllowed)
 		return
 	}
 
-	if ui.sessionState == nil {
+	if srv.sessionState == nil {
 		http.Error(w, "no active sessions", http.StatusBadRequest)
 		return
 	}
 
-	ui.sessionState.Advance()
-	if err := json.NewEncoder(w).Encode(ui.sessionState); err != nil {
+	srv.sessionState.Advance()
+	if err := json.NewEncoder(w).Encode(srv.sessionState); err != nil {
 		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 	}
 }
 
-func (ui *WebUI) resolveHandler(w http.ResponseWriter, req *http.Request) {
+func (srv *Server) resolveHandler(w http.ResponseWriter, req *http.Request) {
 	if req.Method != http.MethodPost {
 		http.Error(w, "invalid method", http.StatusMethodNotAllowed)
 		return
 	}
 
-	if ui.sessionState == nil {
+	if srv.sessionState == nil {
 		http.Error(w, "no active sessions", http.StatusBadRequest)
 		return
 	}
@@ -115,7 +106,7 @@ func (ui *WebUI) resolveHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	result, correct := ui.sessionState.ResolveAnswer(data["answer"])
+	result, correct := srv.sessionState.ResolveAnswer(data["answer"])
 	res := map[string]interface{}{"is_correct": result, "correct": correct}
 	if err := json.NewEncoder(w).Encode(res); err != nil {
 		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
