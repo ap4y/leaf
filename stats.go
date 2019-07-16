@@ -15,10 +15,10 @@ type IntervalSnapshot struct {
 
 // Stats store SM2+ parameters for a Card.
 type Stats struct {
-	LastReviewedAt time.Time          `json:"last_reviewed_at"`
-	Difficulty     float64            `json:"difficulty"`
-	Interval       float64            `json:"interval"`
-	Historical     []IntervalSnapshot `json:"historical"`
+	LastReviewedAt time.Time
+	Difficulty     float64
+	Interval       float64
+	Historical     []IntervalSnapshot
 
 	initial bool
 }
