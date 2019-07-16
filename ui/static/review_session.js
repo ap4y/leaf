@@ -62,7 +62,7 @@ export default class ReviewSession {
     }
   }
 
-  async _startSession(deck) {
+  _startSession(deck) {
     return window
       .fetch(`start/${deck}`, {
         method: "POST"
@@ -76,7 +76,7 @@ export default class ReviewSession {
       });
   }
 
-  async _fetchNext() {
+  _fetchNext() {
     return window.fetch("next").then(res => {
       if (res.ok) return res.json();
 
@@ -86,7 +86,7 @@ export default class ReviewSession {
     });
   }
 
-  async _submitAnswer(answer) {
+  _submitAnswer(answer) {
     return window
       .fetch("resolve", {
         method: "POST",

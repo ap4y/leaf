@@ -6,7 +6,7 @@ export default class DeckList {
       .map(
         ({ name, cards_ready, next_review_at }) =>
           `<li>
-<a href="#${name}" onclick="app.startSession('${name}'); return false;">${name}</a>
+<a href="#${name}" onclick="app.startSession('${name}',${cards_ready}); return false;">${name}</a>
 <div>
   <code>${this._reviewStats(cards_ready, new Date(next_review_at))}</code>
 </div>
@@ -21,7 +21,7 @@ export default class DeckList {
       .join("");
   }
 
-  async _fetchDecks() {
+  _fetchDecks() {
     return window.fetch("decks").then(res => {
       if (res.ok) return res.json();
 

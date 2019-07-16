@@ -26,7 +26,9 @@ class App {
     deckList.render();
   }
 
-  startSession(deck) {
+  startSession(deck, cardsReady) {
+    if (cardsReady === 0) return;
+
     window.history.pushState({ deck }, `Review: ${deck}`, `#${deck}`);
     document.getElementById("decks").style.display = "none";
     document.getElementById("session").style.display = null;
