@@ -37,7 +37,7 @@ func OpenDeck(filename string) (*Deck, error) {
 	}
 
 	deck := &Deck{}
-	cards := make(map[string][]string, 0)
+	cards := make(map[string][]string)
 	scanner := bufio.NewScanner(f)
 	var question string
 	for scanner.Scan() {

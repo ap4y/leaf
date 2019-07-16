@@ -7,11 +7,18 @@ import (
 
 const ratingSuccess = 0.6
 
+// IntervalSnapshot records historical changes of the Interval.
+type IntervalSnapshot struct {
+	Timestamp int64
+	Interval  float64
+}
+
 // Stats store SM2+ parameters for a Card.
 type Stats struct {
 	LastReviewedAt time.Time
 	Difficulty     float64
 	Interval       float64
+	Historical     []IntervalSnapshot
 
 	initial bool
 }
@@ -24,7 +31,7 @@ type CardWithStats struct {
 
 // DefaultStats returns a new Stats initialized with default values.
 func DefaultStats() *Stats {
-	return &Stats{time.Now(), 0.3, 0.2, true}
+	return &Stats{time.Now(), 0.3, 0.2, make([]IntervalSnapshot, 0), true}
 }
 
 // NextReviewAt returns next review timestamp for a card.
@@ -47,7 +54,7 @@ func (s *Stats) IsReady() bool {
 
 // PercentOverdue returns corresponding SM2+ value for a Card.
 func (s *Stats) PercentOverdue() float64 {
-	percentOverdue := time.Now().Sub(s.LastReviewedAt).Hours() / float64(24*s.Interval)
+	percentOverdue := time.Since(s.LastReviewedAt).Hours() / float64(24*s.Interval)
 	return math.Min(2, percentOverdue)
 }
 
@@ -72,6 +79,10 @@ func (s *Stats) Record(rating float64) float64 {
 	}
 
 	s.LastReviewedAt = time.Now()
+	if s.Historical == nil {
+		s.Historical = make([]IntervalSnapshot, 0)
+	}
+	s.Historical = append(s.Historical, IntervalSnapshot{time.Now().Unix(), s.Interval})
 	s.Interval = math.Max(minInterval, math.Min(s.Interval*factor, 300))
 	return s.Interval
 }

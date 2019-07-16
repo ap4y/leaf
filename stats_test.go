@@ -76,5 +76,12 @@ func TestRecord(t *testing.T) {
 		}
 
 		assert.InDeltaSlice(t, []float64{0.2, 0.44, 1, 2.3, 5.35, 1, 2.24}, intervals, 0.01)
+
+		historical := []float64{}
+		for _, snap := range s.Historical {
+			assert.NotNil(t, snap.Timestamp)
+			historical = append(historical, snap.Interval)
+		}
+		assert.InDeltaSlice(t, []float64{0.2, 0.2, 0.44, 1, 2.3, 5.35, 1}, historical, 0.01)
 	})
 }
