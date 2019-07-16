@@ -21,6 +21,7 @@ func TestReviewSession(t *testing.T) {
 	})
 
 	t.Run("StartedAt", func(t *testing.T) {
+		assert.NotNil(t, s.StartedAt())
 	})
 
 	t.Run("Total", func(t *testing.T) {

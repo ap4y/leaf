@@ -1,8 +1,6 @@
 package ui
 
 import (
-	"io/ioutil"
-	"os"
 	"testing"
 
 	"github.com/ap4y/leaf"
@@ -11,45 +9,41 @@ import (
 )
 
 func TestSessionState(t *testing.T) {
-	tmpfile, err := ioutil.TempFile("", "leaf.db")
-	require.NoError(t, err)
-	defer os.Remove(tmpfile.Name())
+	cards := []*leaf.CardWithStats{
+		{leaf.Card{"foo", []string{"bar"}}, leaf.DefaultStats()},
+		{leaf.Card{"bar", []string{"baz"}}, leaf.DefaultStats()},
+	}
 
-	db, err := leaf.OpenBoltStore(tmpfile.Name())
-	require.NoError(t, err)
-
-	cards := make(leaf.Stack)
-	cards["foo"] = []string{"bar"}
-	cards["bar"] = []string{"baz"}
-	deck := &leaf.Deck{Name: "test", Cards: cards}
-
-	s, err := leaf.NewReviewSession(deck, db, 2)
-	require.NoError(t, err)
+	stats := make(map[string]*leaf.Stats)
+	s := leaf.NewReviewSession(cards, func(question string, s *leaf.Stats) error {
+		stats[question] = s
+		return nil
+	})
 
 	state := NewSessionState(s)
-	assert.Equal(t, "test", state.DeckName)
-	assert.Equal(t, 2, state.Total)
-	assert.Equal(t, 2, state.Left)
-	assert.Len(t, state.Question, 3)
-	assert.Equal(t, 3, state.AnswerLen)
+	t.Run("state", func(t *testing.T) {
+		assert.Equal(t, 2, state.Total)
+		assert.Equal(t, 2, state.Left)
+		assert.Equal(t, "foo", state.Question)
+		assert.Equal(t, 3, state.AnswerLen)
+	})
 
-	correct := "bar"
-	if state.Question == "bar" {
-		correct = "baz"
-	}
+	t.Run("ResolveAnswer - incorrect", func(t *testing.T) {
+		res, answer := state.ResolveAnswer("123")
+		require.False(t, res)
+		assert.Equal(t, "bar", answer)
+		assert.Equal(t, 2, state.Left)
+	})
 
-	res, answer := state.ResolveAnswer("123")
-	require.False(t, res)
-	assert.Equal(t, correct, answer)
-	assert.Equal(t, 2, state.Left)
+	t.Run("ResolveAnswer - incorrect", func(t *testing.T) {
+		state.Advance()
+		assert.Equal(t, "bar", state.Question)
+		assert.Equal(t, 3, state.AnswerLen)
+	})
 
-	state.Advance()
-	correct = "bar"
-	if state.Question == "bar" {
-		correct = "baz"
-	}
-
-	res, _ = state.ResolveAnswer(correct)
-	require.True(t, res)
-	assert.Equal(t, 1, state.Left)
+	t.Run("ResolveAnswer - correct", func(t *testing.T) {
+		res, _ := state.ResolveAnswer("baz")
+		require.True(t, res)
+		assert.Equal(t, 1, state.Left)
+	})
 }

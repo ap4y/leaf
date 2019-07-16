@@ -1,12 +1,12 @@
 package ui
 
 import (
-	"bytes"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/ap4y/leaf"
@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestWebUIMux(t *testing.T) {
+func TestWebUI(t *testing.T) {
 	tmpfile, err := ioutil.TempFile("", "leaf.db")
 	require.NoError(t, err)
 	defer os.Remove(tmpfile.Name())
@@ -22,43 +22,75 @@ func TestWebUIMux(t *testing.T) {
 	db, err := leaf.OpenBoltStore(tmpfile.Name())
 	require.NoError(t, err)
 
-	cards := make(leaf.Stack)
-	cards["foo"] = []string{"bar"}
-	cards["bar"] = []string{"baz"}
-	deck := &leaf.Deck{Name: "test", Cards: cards}
-
-	s, err := leaf.NewReviewSession(deck, db, 2)
+	dm, err := leaf.NewDeckManager("..", db)
 	require.NoError(t, err)
 
-	state := NewSessionState(s)
-	ui := NewWebUI(":8080")
-	mux := ui.Handler(state)
+	srv := NewServer(dm, 20)
 
-	req := httptest.NewRequest("GET", "http://example.com/next", nil)
-	w := httptest.NewRecorder()
-	mux.ServeHTTP(w, req)
+	t.Run("listDecks", func(t *testing.T) {
+		req := httptest.NewRequest("GET", "http://example.com/decks", nil)
+		w := httptest.NewRecorder()
 
-	res := w.Result()
-	assert.Equal(t, http.StatusOK, res.StatusCode)
+		srv.listDecks(w, req)
+		res := w.Result()
+		assert.Equal(t, http.StatusOK, res.StatusCode)
 
-	resState := &SessionState{}
-	require.NoError(t, json.NewDecoder(res.Body).Decode(resState))
-	assert.Equal(t, "test", state.DeckName)
-	assert.Equal(t, 2, state.Total)
-	assert.Equal(t, 2, state.Left)
-	assert.Len(t, state.Question, 3)
-	assert.Equal(t, 3, state.AnswerLen)
+		decks := make([]*leaf.DeckStats, 0)
+		require.NoError(t, json.NewDecoder(w.Body).Decode(&decks))
+		assert.Len(t, decks, 1)
+	})
 
-	body := new(bytes.Buffer)
-	require.NoError(t, json.NewEncoder(body).Encode(map[string]string{"answer": "123"}))
-	req = httptest.NewRequest("POST", "http://example.com/resolve", body)
-	w = httptest.NewRecorder()
-	mux.ServeHTTP(w, req)
+	t.Run("deckStats", func(t *testing.T) {
+		req := httptest.NewRequest("GET", "http://example.com/stats/Hiragana", nil)
+		w := httptest.NewRecorder()
 
-	res = w.Result()
-	assert.Equal(t, http.StatusOK, res.StatusCode)
-	result := make(map[string]interface{})
-	require.NoError(t, json.NewDecoder(res.Body).Decode(&result))
-	assert.False(t, result["is_correct"].(bool))
-	assert.Len(t, result["correct"], 3)
+		srv.deckStats(w, req)
+		res := w.Result()
+		assert.Equal(t, http.StatusOK, res.StatusCode)
+
+		stats := make([]*leaf.CardWithStats, 0)
+		require.NoError(t, json.NewDecoder(w.Body).Decode(&stats))
+		assert.Len(t, stats, 46)
+	})
+
+	t.Run("startReview", func(t *testing.T) {
+		req := httptest.NewRequest("POST", "http://example.com/start/Hiragana", nil)
+		w := httptest.NewRecorder()
+
+		srv.startSession(w, req)
+		res := w.Result()
+		assert.Equal(t, http.StatusOK, res.StatusCode)
+
+		state := new(SessionState)
+		require.NoError(t, json.NewDecoder(w.Body).Decode(state))
+		assert.Equal(t, 20, state.Total)
+		assert.Equal(t, 20, state.Left)
+	})
+
+	t.Run("nextCard", func(t *testing.T) {
+		req := httptest.NewRequest("GET", "http://example.com/next", nil)
+		w := httptest.NewRecorder()
+
+		srv.nextCard(w, req)
+		res := w.Result()
+		assert.Equal(t, http.StatusOK, res.StatusCode)
+
+		state := new(SessionState)
+		require.NoError(t, json.NewDecoder(w.Body).Decode(state))
+		assert.Equal(t, 20, state.Total)
+		assert.Equal(t, 20, state.Left)
+	})
+
+	t.Run("resolveCard", func(t *testing.T) {
+		req := httptest.NewRequest("POST", "http://example.com/resolve", strings.NewReader("{\"answer\":\"foo\"}"))
+		w := httptest.NewRecorder()
+
+		srv.resolveCard(w, req)
+		res := w.Result()
+		assert.Equal(t, http.StatusOK, res.StatusCode)
+
+		result := make(map[string]interface{})
+		require.NoError(t, json.NewDecoder(w.Body).Decode(&result))
+		assert.Equal(t, false, result["is_correct"])
+	})
 }

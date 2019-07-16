@@ -28,10 +28,10 @@ func (srv *Server) Serve(addr string, devMode bool) error {
 	mux := http.NewServeMux()
 	mux.Handle("/", http.FileServer(FS(devMode)))
 	mux.HandleFunc("/decks", srv.listDecks)
-	mux.HandleFunc("/start/", srv.startHandler)
-	mux.HandleFunc("/stats/", srv.statsHandler)
-	mux.HandleFunc("/next", srv.nextHandler)
-	mux.HandleFunc("/resolve", srv.resolveHandler)
+	mux.HandleFunc("/start/", srv.startSession)
+	mux.HandleFunc("/stats/", srv.deckStats)
+	mux.HandleFunc("/next", srv.nextCard)
+	mux.HandleFunc("/resolve", srv.resolveCard)
 
 	log.Println("Serving HTTP on", addr)
 	return http.ListenAndServe(addr, mux)
@@ -54,7 +54,7 @@ func (srv *Server) listDecks(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func (srv *Server) startHandler(w http.ResponseWriter, req *http.Request) {
+func (srv *Server) startSession(w http.ResponseWriter, req *http.Request) {
 	if req.Method != http.MethodPost {
 		http.Error(w, "invalid method", http.StatusMethodNotAllowed)
 		return
@@ -73,7 +73,7 @@ func (srv *Server) startHandler(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func (srv *Server) statsHandler(w http.ResponseWriter, req *http.Request) {
+func (srv *Server) deckStats(w http.ResponseWriter, req *http.Request) {
 	if req.Method != http.MethodGet {
 		http.Error(w, "invalid method", http.StatusMethodNotAllowed)
 		return
@@ -91,7 +91,7 @@ func (srv *Server) statsHandler(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func (srv *Server) nextHandler(w http.ResponseWriter, req *http.Request) {
+func (srv *Server) nextCard(w http.ResponseWriter, req *http.Request) {
 	if req.Method != http.MethodGet {
 		http.Error(w, "invalid method", http.StatusMethodNotAllowed)
 		return
@@ -108,7 +108,7 @@ func (srv *Server) nextHandler(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func (srv *Server) resolveHandler(w http.ResponseWriter, req *http.Request) {
+func (srv *Server) resolveCard(w http.ResponseWriter, req *http.Request) {
 	if req.Method != http.MethodPost {
 		http.Error(w, "invalid method", http.StatusMethodNotAllowed)
 		return
