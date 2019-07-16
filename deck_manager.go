@@ -83,6 +83,7 @@ func (dm *DeckManager) ReviewSession(deckName string, total int) (*ReviewSession
 	}), nil
 }
 
+// DeckStats returns card stats for a given deck name.
 func (dm *DeckManager) DeckStats(deckName string) ([]*CardWithStats, error) {
 	var deck *Deck
 	for _, d := range dm.decks {

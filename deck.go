@@ -10,8 +10,8 @@ import (
 // Card represents a single card in a Deck. Each card may have
 // multiple sides (answers).
 type Card struct {
-	Question string
-	Sides    []string
+	Question string   `json:"card"`
+	Sides    []string `json:"-"`
 }
 
 // Answer returns combined space separated answer for all sides of the card.

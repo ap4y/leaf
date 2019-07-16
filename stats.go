@@ -9,16 +9,16 @@ const ratingSuccess = 0.6
 
 // IntervalSnapshot records historical changes of the Interval.
 type IntervalSnapshot struct {
-	Timestamp int64
-	Interval  float64
+	Timestamp int64   `json:"ts"`
+	Interval  float64 `json:"interval"`
 }
 
 // Stats store SM2+ parameters for a Card.
 type Stats struct {
-	LastReviewedAt time.Time
-	Difficulty     float64
-	Interval       float64
-	Historical     []IntervalSnapshot
+	LastReviewedAt time.Time          `json:"last_reviewed_at"`
+	Difficulty     float64            `json:"difficulty"`
+	Interval       float64            `json:"interval"`
+	Historical     []IntervalSnapshot `json:"historical"`
 
 	initial bool
 }

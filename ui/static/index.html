@@ -37,7 +37,36 @@
         </p>
       </main>
     </div>
+
+    <div id="stats">
+      <header>
+        <h3>Deck: <span id="stats-deck"></span></h3>
+        <div class="stats-select-row">
+          <h4>Cards: </h4>
+          <select id="statsList"></select>
+        </div>
+      </header>
+
+      <main class="container">
+        <h3>Current Stats for <span id="stats-card"></span></h3>
+
+        <ul>
+          <li>
+            <strong>Last Reviewed At: </strong>
+            <span id="reviewedAt"></span>
+          </li>
+          <li>
+            <strong>Difficulty: </strong>
+            <span id="difficulty"></span>
+          </li>
+          <li>
+            <strong>Historical: </strong>
+            <span id="historical"></span>
+          </li>
+        </ul>
+      </main>
+    </div>
   </body>
 
-  <script src="main.js"></script>
+  <script src="main.js" type="module"></script>
 </html>

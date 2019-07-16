@@ -28,7 +28,8 @@ func (srv *Server) Serve(addr string, devMode bool) error {
 	mux := http.NewServeMux()
 	mux.Handle("/", http.FileServer(FS(devMode)))
 	mux.HandleFunc("/decks", srv.listDecks)
-	mux.HandleFunc("/start/", srv.startReview)
+	mux.HandleFunc("/start/", srv.startHandler)
+	mux.HandleFunc("/stats/", srv.statsHandler)
 	mux.HandleFunc("/next", srv.nextHandler)
 	mux.HandleFunc("/resolve", srv.resolveHandler)
 
@@ -53,7 +54,7 @@ func (srv *Server) listDecks(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func (srv *Server) startReview(w http.ResponseWriter, req *http.Request) {
+func (srv *Server) startHandler(w http.ResponseWriter, req *http.Request) {
 	if req.Method != http.MethodPost {
 		http.Error(w, "invalid method", http.StatusMethodNotAllowed)
 		return
@@ -68,6 +69,24 @@ func (srv *Server) startReview(w http.ResponseWriter, req *http.Request) {
 
 	srv.sessionState = NewSessionState(session)
 	if err := json.NewEncoder(w).Encode(srv.sessionState); err != nil {
+		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
+	}
+}
+
+func (srv *Server) statsHandler(w http.ResponseWriter, req *http.Request) {
+	if req.Method != http.MethodGet {
+		http.Error(w, "invalid method", http.StatusMethodNotAllowed)
+		return
+	}
+
+	deckName := strings.Replace(req.URL.Path, "/stats/", "", -1)
+	stats, err := srv.dm.DeckStats(deckName)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(stats); err != nil {
 		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 	}
 }
