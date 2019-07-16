@@ -163,6 +163,8 @@ code {
   background: #d8dee9;
 }
 
+#question { font-weight: normal; }
+
 @media screen and (max-width: 500px) {
   .deck-list li {
     flex-direction: column;

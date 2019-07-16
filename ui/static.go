@@ -119,7 +119,7 @@ func (f *_escFile) Readdir(count int) ([]os.FileInfo, error) {
 		return nil, io.EOF
 	}
 
-	return []os.FileInfo(fis[0:limit]), nil
+	return fis[0:limit], nil
 }
 
 func (f *_escFile) Stat() (os.FileInfo, error) {
@@ -212,72 +212,74 @@ var _escData = map[string]*_escFile{
 	"/index.html": {
 		name:    "index.html",
 		local:   "ui/static/index.html",
-		size:    1018,
-		modtime: 1555475082,
+		size:    959,
+		modtime: 1556597664,
 		compressed: `
-H4sIAAAAAAAC/4xTS27cMAzd+xSsFt2lQtBNEcgGAhRddVGgJ9DI9FgdWVJFetq5RHvHnqSQ5F+QBMjK
-4jOfHvlIqXd9MHyLCCNPrmsalb/gtD+3Ar3oGgA1ou7zAUBNyBrMqBMht2Lm4e6T6Jr6jy077D6jucBj
-jErWuP5z1l8goWsF8c0hjYgsYEw4tOKc+IMhEpDraAXjb5Y5fgN10ta/ylWyFp6Pp9DfwDhNVPTWu72+
-gu1b0aO5kFgTTPCsrce0pGUL7ktj9KDkeL+hs9vYXy3xdkEG7lxGOiVnt4hJr6+rV72twoRENviDEOoe
-0xpm4OMeAOQiHkBR1H6TziIZOOapUzqG31I4JyQ6UuOCPacruYtWE3NFK5A9XxtdyofnjhXPis7PGYlz
-jyup7EVWzU7u6UNIUyFYH2f+EtIknnRU4D1BgJ45DMHMVE4mTNEhYyvCMAj5ArWuCM2nybKAq3YztuLf
-3z8C5LH3XMexrlg0E9Ls9gkv4ROVzVnt6Rem76wZRffenyi+MKAt24SU0PBjIb2Sr2TcB5IHsK5Ub691
-1fOC11Unk2xkoGSW9/GjjrjAXaNkfen/AwAA//+5AcpD+gMAAA==
+H4sIAAAAAAAC/3RTTY7UPBDd9ynqq8W3G6IRGzRyIo2EWLFA4gRup9Ix7djGVWnoS8AdOQmynb/RDKu4
+Xur5vfqx+q8PRu6RYJTJdaeTyl9w2l9aJI/dCUCNpPt8AFATiQYz6sQkLc4yPHzA7lT/iRVH3UcyV3iO
+UTU1rv+c9VdI5FpkuTvikUgQxkRDi5O2/p1hRshGWhT6KU2Oi3hT1fPxHPo7GKeZW7wkweVur29g+xZ7
+MlfGNcEEL9p6SktaruOxuOMn1YyPGzq7jf3ZsmwXZODBZaRTzewWscbr21pwb6swE7MN/iBEuqe0hhl4
+vwcA2cQTKI7ab9JZJAPHPHVOx/BLCpdEzEdqXLDXdNXsorWJ2dEK5J6vhS724XXHSs+KzveZWHKNK6kM
+N6vmTu7pQ0hTIVgfZ/kU0oQvKirwnoCgZwlDMDOXkwlTdCTUYhgGbN6g1hXh+TxZQbhpN1OLf37/QmiO
+tWcfR1+xaCbi2e0TXsIXKltntecflL6KFsLuf3/m+MaAtmwTUiIjz4X0j3zVxH0geQDrSvX2Vlc9L3hd
+dTbJRgFOZnkf3+qIC9ydVFOf698AAAD//0tyxny/AwAA
 `,
 	},
 
 	"/main.css": {
 		name:    "main.css",
 		local:   "ui/static/main.css",
-		size:    2642,
-		modtime: 1555564061,
+		size:    2854,
+		modtime: 1556607882,
 		compressed: `
-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
+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
 `,
 	},
 
 	"/main.js": {
 		name:    "main.js",
 		local:   "ui/static/main.js",
-		size:    4530,
-		modtime: 1555567541,
+		size:    4541,
+		modtime: 1556598149,
 		compressed: `
-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
+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
+EQAA
 `,
 	},
 
@@ -291,8 +293,8 @@ Uj9qGjpzjzERUiCZjf4EuD8Gqf+uCq/tL4DwnjRZ647yGMmNMC0rXQRAnTeop7Dwnxm2bBq6Wzxrno/5
 var _escDirs = map[string][]os.FileInfo{
 
 	"ui/static": {
-		_escData["/main.js"],
-		_escData["/main.css"],
 		_escData["/index.html"],
+		_escData["/main.css"],
+		_escData["/main.js"],
 	},
 }
