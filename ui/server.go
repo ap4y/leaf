@@ -15,6 +15,7 @@ import (
 type statsResponse struct {
 	Card       string                  `json:"card"`
 	ReviewedAt time.Time               `json:"reviewed_at"`
+	ReviewAt   time.Time               `json:"review_at"`
 	Difficulty float64                 `json:"difficulty"`
 	Historical []leaf.IntervalSnapshot `json:"historical"`
 }
@@ -96,7 +97,10 @@ func (srv *Server) deckStats(w http.ResponseWriter, req *http.Request) {
 
 	res := make([]statsResponse, 0)
 	for _, stat := range stats {
-		res = append(res, statsResponse{stat.Question, stat.LastReviewedAt, stat.Difficulty, stat.Historical})
+		res = append(res, statsResponse{
+			stat.Question, stat.LastReviewedAt, stat.NextReviewAt(),
+			stat.Difficulty, stat.Historical,
+		})
 	}
 
 	if err := json.NewEncoder(w).Encode(res); err != nil {

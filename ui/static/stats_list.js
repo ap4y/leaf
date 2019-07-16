@@ -21,10 +21,13 @@ export default class StatsList {
       .join("");
   }
 
-  _renderStats({ card, reviewed_at, difficulty, historical }) {
+  _renderStats({ card, reviewed_at, review_at, difficulty, historical }) {
     document.getElementById("stats-card").innerHTML = card;
     document.getElementById("reviewedAt").innerHTML = new Date(
       reviewed_at
+    ).toLocaleString();
+    document.getElementById("reviewAt").innerHTML = new Date(
+      review_at
     ).toLocaleString();
     document.getElementById("difficulty").innerHTML = difficulty;
     document.getElementById("historical").innerHTML = (historical || [])
