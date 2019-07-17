@@ -6,19 +6,6 @@ import (
 	"time"
 )
 
-// Supermemo calculates review intervals
-type Supermemo interface {
-	json.Marshaler
-	json.Unmarshaler
-
-	// Advance advances supermemo state for a card.
-	Advance(rating float64) (interval float64)
-	// NextReviewAt returns next review timestamp for a card.
-	NextReviewAt() time.Time
-	// SortParam returns values that should used as a review order for cards
-	SortParam() float64
-}
-
 // IntervalSnapshot records historical changes of the Interval.
 type IntervalSnapshot struct {
 	Timestamp  int64   `json:"ts"`

@@ -1,7 +1,6 @@
 package leaf
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -77,17 +76,4 @@ func TestReviewSession(t *testing.T) {
 	barStats := stats["bar"].Supermemo.(*Supermemo2Plus)
 	assert.InDelta(t, 0.27, barStats.Difficulty, 0.01)
 	assert.InDelta(t, 0.46, barStats.Interval, 0.01)
-}
-
-func TestRating(t *testing.T) {
-	tcs := []struct {
-		mistakes int
-		rating   float64
-	}{{0, 1}, {1, 0.59}, {2, 0.39}, {3, 0.19}, {4, 0}, {5, 0}, {6, 0}}
-	for _, tc := range tcs {
-		t.Run(fmt.Sprintf("%d", tc.mistakes), func(t *testing.T) {
-			s := &ReviewSession{mistakes: map[string]int{"foo": tc.mistakes}}
-			assert.InDelta(t, tc.rating, s.rating("foo"), 0.01)
-		})
-	}
 }

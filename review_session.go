@@ -2,7 +2,6 @@ package leaf
 
 import (
 	"errors"
-	"math"
 	"time"
 )
 
@@ -76,7 +75,7 @@ func (s *ReviewSession) Answer(answer string) (bool, error) {
 
 	s.queue = s.queue[1:]
 	if answer == card.Answer() {
-		rating := s.rating(question)
+		rating := card.Rate(s.mistakes[question])
 		card.Advance(rating)
 		if err := s.statsSaver(question, card.Stats); err != nil {
 			return false, err
@@ -88,15 +87,6 @@ func (s *ReviewSession) Answer(answer string) (bool, error) {
 	s.mistakes[question]++
 	s.queue = append(s.queue, question)
 	return false, nil
-}
-
-func (s *ReviewSession) rating(question string) float64 {
-	miss := float64(s.mistakes[question])
-	if miss == 0 {
-		return 1
-	}
-
-	return math.Max(0, 0.79-miss/5)
 }
 
 func (s *ReviewSession) currentCard() *CardWithStats {

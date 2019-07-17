@@ -48,7 +48,7 @@ func TestWebUI(t *testing.T) {
 		res := w.Result()
 		assert.Equal(t, http.StatusOK, res.StatusCode)
 
-		stats := make([]statsResponse, 0)
+		stats := make([]map[string]interface{}, 0)
 		require.NoError(t, json.NewDecoder(w.Body).Decode(&stats))
 		assert.Len(t, stats, 46)
 	})
