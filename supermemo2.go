@@ -42,8 +42,7 @@ func (sm *Supermemo2) Advance(rating float64) float64 {
 	sm.Total++
 	sm.LastReviewedAt = time.Now()
 
-	performance := rating * 5
-	sm.Easiness += -0.8 + 0.28*performance - 0.02*math.Pow(performance, 2)
+	sm.Easiness += 0.1 - (1-rating)*(0.4+(1-rating)*0.5)
 	sm.Easiness = math.Max(sm.Easiness, 1.3)
 
 	interval := 1.0
