@@ -55,14 +55,13 @@ func (sm *Supermemo2Plus) Advance(rating float64) float64 {
 		percentOverdue = sm.PercentOverdue()
 	}
 
-	sm.Difficulty += percentOverdue / 50 * (8 - 9*rating)
+	sm.Difficulty += percentOverdue / 17 * (8 - 9*rating)
 	sm.Difficulty = math.Max(0, math.Min(1, sm.Difficulty))
-	difficultyWeight := 3.5 - 1.7*sm.Difficulty
+	difficultyWeight := 3 - 1.7*sm.Difficulty
 
-	minInterval := math.Min(1.0, sm.Interval)
+	minInterval := 1.0
 	factor := minInterval / math.Pow(difficultyWeight, 2)
 	if success {
-		minInterval = 0.2
 		factor = minInterval + (difficultyWeight-1)*percentOverdue
 	}
 
@@ -74,7 +73,7 @@ func (sm *Supermemo2Plus) Advance(rating float64) float64 {
 		sm.Historical,
 		IntervalSnapshot{time.Now().Unix(), sm.Interval, sm.Difficulty},
 	)
-	sm.Interval = math.Max(minInterval, math.Min(sm.Interval*factor, 300))
+	sm.Interval = sm.Interval * factor
 	return sm.Interval
 }
 

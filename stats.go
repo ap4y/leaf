@@ -54,7 +54,7 @@ type CardWithStats struct {
 
 // DefaultStats returns a new Stats initialized with default values.
 func DefaultStats() *Stats {
-	return &Stats{NewSupermemo2Plus(), &HarshRater{}}
+	return &Stats{NewSupermemo2PlusCustom(), &HarshRater{}}
 }
 
 // IsReady signals whether card is read for review.

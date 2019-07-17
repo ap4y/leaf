@@ -11,23 +11,23 @@ import (
 )
 
 func TestNextReviewAt(t *testing.T) {
-	sm := &Supermemo2Plus{LastReviewedAt: time.Unix(100, 0), Interval: 1}
+	sm := &Supermemo2PlusCustom{Supermemo2Plus{LastReviewedAt: time.Unix(100, 0), Interval: 1}}
 	assert.Equal(t, int64(86500), sm.NextReviewAt().Unix())
 
-	sm = &Supermemo2Plus{LastReviewedAt: time.Unix(100, 0).Add(-24 * time.Hour), Interval: 1}
+	sm = &Supermemo2PlusCustom{Supermemo2Plus{LastReviewedAt: time.Unix(100, 0).Add(-24 * time.Hour), Interval: 1}}
 	assert.Equal(t, int64(100), sm.NextReviewAt().Unix())
 
-	sm = NewSupermemo2Plus()
+	sm = NewSupermemo2PlusCustom()
 	assert.InDelta(t, time.Since(sm.NextReviewAt()), time.Hour, float64(time.Minute))
 	interval := sm.Advance(1)
 	assert.InDelta(t, time.Duration(24*interval)*time.Hour, time.Until(sm.NextReviewAt()), float64(time.Minute))
 }
 
 func TestPercentOverdue(t *testing.T) {
-	sm := &Supermemo2Plus{LastReviewedAt: time.Now().Add(-time.Hour), Interval: 1}
+	sm := &Supermemo2PlusCustom{Supermemo2Plus{LastReviewedAt: time.Now().Add(-time.Hour), Interval: 1}}
 	assert.InDelta(t, 0.04, sm.PercentOverdue(), 0.01)
 
-	sm = &Supermemo2Plus{LastReviewedAt: time.Now().Add(-48 * time.Hour), Interval: 1}
+	sm = &Supermemo2PlusCustom{Supermemo2Plus{LastReviewedAt: time.Now().Add(-48 * time.Hour), Interval: 1}}
 	assert.InDelta(t, 2.0, sm.PercentOverdue(), 0.01)
 }
 
@@ -39,7 +39,7 @@ func TestRecord(t *testing.T) {
 	}
 	for idx, rating := range []float64{0.5, 0.6, 1.0} {
 		t.Run(fmt.Sprintf("%f", rating), func(t *testing.T) {
-			sm := NewSupermemo2Plus()
+			sm := NewSupermemo2PlusCustom()
 			intervals := []float64{}
 			for i := 0; i < 9; i++ {
 				interval := sm.Advance(rating)
@@ -54,7 +54,7 @@ func TestRecord(t *testing.T) {
 	}
 
 	t.Run("sequence", func(t *testing.T) {
-		sm := NewSupermemo2Plus()
+		sm := NewSupermemo2PlusCustom()
 		intervals := []float64{}
 		for _, rating := range []float64{1, 1, 1, 1, 0.5, 1} {
 			interval := sm.Advance(rating)
@@ -76,11 +76,11 @@ func TestRecord(t *testing.T) {
 }
 
 func TestJsonMarshalling(t *testing.T) {
-	sm := &Supermemo2Plus{LastReviewedAt: time.Unix(100, 0), Interval: 1, Difficulty: 0.2}
+	sm := &Supermemo2PlusCustom{Supermemo2Plus{LastReviewedAt: time.Unix(100, 0), Interval: 1, Difficulty: 0.2}}
 	res, err := json.Marshal(sm)
 	require.NoError(t, err)
 
-	newSM := new(Supermemo2Plus)
+	newSM := new(Supermemo2PlusCustom)
 	require.NoError(t, json.Unmarshal(res, newSM))
 	assert.Equal(t, sm, newSM)
 }
