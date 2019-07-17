@@ -22,12 +22,16 @@ export default class StatsList {
   }
 
   _renderStats({ card, stats }) {
+    const interval = Math.round(24 * stats["Interval"]);
+    const intervalString =
+      (interval >= 24 ? `${Math.floor(interval / 24)}d ` : "") +
+      `${interval % 24}h`;
+
     document.getElementById("stats-card").innerHTML = card;
     document.getElementById("reviewedAt").innerHTML = new Date(
       stats["LastReviewedAt"]
     ).toLocaleString();
-    document.getElementById("interval").innerHTML =
-      Math.ceil(stats["Interval"]) * 24;
+    document.getElementById("interval").innerHTML = intervalString;
     document.getElementById("difficulty").innerHTML = stats["Difficulty"];
     document.getElementById("historical").innerHTML = (
       stats["Historical"] || []
