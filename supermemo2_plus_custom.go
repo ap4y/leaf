@@ -24,7 +24,7 @@ func (sm *Supermemo2PlusCustom) Advance(rating float64) float64 {
 		percentOverdue = sm.PercentOverdue()
 	}
 
-	sm.Difficulty += percentOverdue / 50 * (8 - 9*rating)
+	sm.Difficulty += percentOverdue / 35 * (8 - 9*rating)
 	sm.Difficulty = math.Max(0, math.Min(1, sm.Difficulty))
 	difficultyWeight := 3.5 - 1.7*sm.Difficulty
 
