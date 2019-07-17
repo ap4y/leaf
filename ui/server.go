@@ -7,17 +7,13 @@ import (
 	"log"
 	"net/http"
 	"strings"
-	"time"
 
 	"github.com/ap4y/leaf"
 )
 
 type statsResponse struct {
-	Card       string                  `json:"card"`
-	ReviewedAt time.Time               `json:"reviewed_at"`
-	ReviewAt   time.Time               `json:"review_at"`
-	Difficulty float64                 `json:"difficulty"`
-	Historical []leaf.IntervalSnapshot `json:"historical"`
+	Card  string      `json:"card"`
+	Stats *leaf.Stats `json:"stats"`
 }
 
 // Server implements web ui for reviews.
@@ -98,8 +94,7 @@ func (srv *Server) deckStats(w http.ResponseWriter, req *http.Request) {
 	res := make([]statsResponse, 0)
 	for _, stat := range stats {
 		res = append(res, statsResponse{
-			stat.Question, stat.LastReviewedAt, stat.NextReviewAt(),
-			stat.Difficulty, stat.Historical,
+			stat.Question, stat.Stats,
 		})
 	}
 

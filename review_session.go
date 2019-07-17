@@ -77,7 +77,7 @@ func (s *ReviewSession) Answer(answer string) (bool, error) {
 	s.queue = s.queue[1:]
 	if answer == card.Answer() {
 		rating := s.rating(question)
-		card.Record(rating)
+		card.Advance(rating)
 		if err := s.statsSaver(question, card.Stats); err != nil {
 			return false, err
 		}

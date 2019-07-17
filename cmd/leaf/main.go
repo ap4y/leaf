@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
@@ -45,9 +46,13 @@ func main() {
 		}
 
 		w := tabwriter.NewWriter(os.Stdout, 5, 5, 5, ' ', 0)
-		fmt.Fprintln(w, "Card\tDifficulty\tInterval")
+		fmt.Fprintln(w, "Card\tStats")
 		for _, s := range stats {
-			fmt.Fprintf(w, "%s\t%.1f\t%.1f\n", s.Question, s.Difficulty, s.Interval)
+			stat, err := json.Marshal(s)
+			if err != nil {
+				continue
+			}
+			fmt.Fprintf(w, "%s\t%s\n", s.Question, stat)
 		}
 		w.Flush()
 	case "review":

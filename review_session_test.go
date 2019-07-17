@@ -70,11 +70,13 @@ func TestReviewSession(t *testing.T) {
 		assert.Equal(t, 0, s.Left())
 	})
 
-	assert.InDelta(t, 0.45, stats["foo"].Difficulty, 0.01)
-	assert.InDelta(t, 0.2, stats["foo"].Interval, 0.01)
+	fooStats := stats["foo"].Supermemo.(*Supermemo2Plus)
+	assert.InDelta(t, 0.45, fooStats.Difficulty, 0.01)
+	assert.InDelta(t, 0.2, fooStats.Interval, 0.01)
 
-	assert.InDelta(t, 0.29, stats["bar"].Difficulty, 0.01)
-	assert.InDelta(t, 0.2, stats["bar"].Interval, 0.01)
+	barStats := stats["bar"].Supermemo.(*Supermemo2Plus)
+	assert.InDelta(t, 0.27, barStats.Difficulty, 0.01)
+	assert.InDelta(t, 0.46, barStats.Interval, 0.01)
 }
 
 func TestRating(t *testing.T) {

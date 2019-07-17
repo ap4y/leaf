@@ -29,7 +29,7 @@ func TestDeckManager(t *testing.T) {
 		deck := decks[0]
 		assert.Equal(t, "Hiragana", deck.Name)
 		assert.Equal(t, 46, deck.CardsReady)
-		assert.InDelta(t, time.Now().Unix(), deck.NextReviewAt.Unix(), 1)
+		assert.InDelta(t, time.Since(deck.NextReviewAt), time.Hour, float64(time.Minute))
 	})
 
 	t.Run("ReviewSession", func(t *testing.T) {
@@ -44,8 +44,9 @@ func TestDeckManager(t *testing.T) {
 				return true
 			}
 
-			assert.InDelta(t, 0.45, s.Difficulty, 0.01)
-			assert.InDelta(t, 0.2, s.Interval, 0.01)
+			sm := s.Supermemo.(*Supermemo2Plus)
+			assert.InDelta(t, 0.45, sm.Difficulty, 0.01)
+			assert.InDelta(t, 0.2, sm.Interval, 0.01)
 			return false
 		})
 
@@ -59,6 +60,7 @@ func TestDeckManager(t *testing.T) {
 
 		s := stats[0]
 		assert.NotEmpty(t, s.Question)
-		assert.InDelta(t, 0.3, s.Difficulty, 0.01)
+		sm := s.Supermemo.(*Supermemo2Plus)
+		assert.InDelta(t, 0.3, sm.Difficulty, 0.01)
 	})
 }

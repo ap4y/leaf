@@ -39,7 +39,7 @@ func (db *boltStore) RangeStats(deck string, rangeFunc func(card string, stats *
 		}
 
 		return b.ForEach(func(card, stats []byte) error {
-			s := new(Stats)
+			s := DefaultStats()
 			if err := json.Unmarshal(stats, s); err != nil {
 				return fmt.Errorf("json: %s", err)
 			}

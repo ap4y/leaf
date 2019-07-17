@@ -130,7 +130,7 @@ func (dm *DeckManager) reviewDeck(deck *Deck, total int) (nextReviewAt time.Time
 	}
 
 	sort.Slice(stats, func(i, j int) bool {
-		return stats[i].PercentOverdue() > stats[j].PercentOverdue()
+		return stats[i].SortParam() > stats[j].SortParam()
 	})
 
 	if len(stats) > 0 {

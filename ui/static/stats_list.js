@@ -21,16 +21,17 @@ export default class StatsList {
       .join("");
   }
 
-  _renderStats({ card, reviewed_at, review_at, difficulty, historical }) {
+  _renderStats({ card, stats }) {
     document.getElementById("stats-card").innerHTML = card;
     document.getElementById("reviewedAt").innerHTML = new Date(
-      reviewed_at
+      stats["LastReviewedAt"]
     ).toLocaleString();
-    document.getElementById("reviewAt").innerHTML = new Date(
-      review_at
-    ).toLocaleString();
-    document.getElementById("difficulty").innerHTML = difficulty;
-    document.getElementById("historical").innerHTML = (historical || [])
+    document.getElementById("interval").innerHTML =
+      Math.ceil(stats["Interval"]) * 24;
+    document.getElementById("difficulty").innerHTML = stats["Difficulty"];
+    document.getElementById("historical").innerHTML = (
+      stats["Historical"] || []
+    )
       .map(({ interval }) => interval)
       .join(", ");
   }
