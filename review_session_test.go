@@ -74,6 +74,6 @@ func TestReviewSession(t *testing.T) {
 	assert.InDelta(t, 0.2, fooStats.Interval, 0.01)
 
 	barStats := stats["bar"].Supermemo.(*Supermemo2PlusCustom)
-	assert.InDelta(t, 0.27, barStats.Difficulty, 0.01)
-	assert.InDelta(t, 0.46, barStats.Interval, 0.01)
+	assert.InDelta(t, 0.28, barStats.Difficulty, 0.01)
+	assert.InDelta(t, 0.37, barStats.Interval, 0.01)
 }

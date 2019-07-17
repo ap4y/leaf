@@ -8,9 +8,9 @@ import (
 
 // IntervalSnapshot records historical changes of the Interval.
 type IntervalSnapshot struct {
-	Timestamp  int64   `json:"ts"`
-	Interval   float64 `json:"interval"`
-	Difficulty float64 `json:"difficulty"`
+	Timestamp int64   `json:"ts"`
+	Interval  float64 `json:"interval"`
+	Factor    float64 `json:"factor"`
 }
 
 // Supermemo2Plus calculates review intervals using SM2+ algorithm
@@ -24,7 +24,7 @@ type Supermemo2Plus struct {
 // NewSupermemo2Plus returns a new Supermemo2Plus instance
 func NewSupermemo2Plus() *Supermemo2Plus {
 	return &Supermemo2Plus{
-		LastReviewedAt: time.Now().Add(-5 * time.Hour),
+		LastReviewedAt: time.Now().Add(-4 * time.Hour),
 		Difficulty:     0.3,
 		Interval:       0.2,
 		Historical:     make([]IntervalSnapshot, 0),
@@ -59,10 +59,9 @@ func (sm *Supermemo2Plus) Advance(rating float64) float64 {
 	sm.Difficulty = math.Max(0, math.Min(1, sm.Difficulty))
 	difficultyWeight := 3 - 1.7*sm.Difficulty
 
-	minInterval := 1.0
-	factor := minInterval / math.Pow(difficultyWeight, 2)
+	factor := 1.0 / math.Pow(difficultyWeight, 2)
 	if success {
-		factor = minInterval + (difficultyWeight-1)*percentOverdue
+		factor = 1.0 + (difficultyWeight-1)*percentOverdue
 	}
 
 	sm.LastReviewedAt = time.Now()

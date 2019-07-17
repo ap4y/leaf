@@ -29,7 +29,7 @@ func TestDeckManager(t *testing.T) {
 		deck := decks[0]
 		assert.Equal(t, "Hiragana", deck.Name)
 		assert.Equal(t, 46, deck.CardsReady)
-		assert.InDelta(t, time.Since(deck.NextReviewAt), time.Hour, float64(time.Minute))
+		assert.InDelta(t, time.Since(deck.NextReviewAt), 0, float64(time.Minute))
 	})
 
 	t.Run("ReviewSession", func(t *testing.T) {
