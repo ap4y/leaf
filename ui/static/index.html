@@ -1,75 +1,21 @@
-<!doctype html>
+<!DOCTYPE html>
 
 <html lang="en">
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
 
     <title>Deck App</title>
-    <link rel="stylesheet" href="main.css" type="text/css">
+    <link rel="stylesheet" href="main.css" type="text/css" />
   </head>
 
   <body class="grt">
     <nav id="decks" class="container">
       <h1>Decks:</h1>
-      <ul id="deckList" class="deck-list"></ul>
     </nav>
 
-    <div id="session">
-      <header>
-        <h3>
-          Deck: <span id="deck"></span>
-          <br>
-          Progress: <span id="progress"></span>
-        </h3>
-      </header>
+    <div id="session"></div>
 
-      <main class="session container">
-        <h1 id="question" class="title"></h1>
-
-        <form id="inputForm">
-          <input id="input" autofocus autocomplete="off"/>
-          <input type="submit" value="⏎" />
-        </form>
-
-        <p id="result" class="result">
-          <span id="answerState">&nbsp</span>
-          <span id="correctAnswer">&nbsp</span>
-        </p>
-      </main>
-    </div>
-
-    <div id="stats">
-      <header>
-        <h3>Deck: <span id="stats-deck"></span></h3>
-        <div class="stats-select-row">
-          <h4>Cards: </h4>
-          <select id="statsList"></select>
-        </div>
-      </header>
-
-      <main class="container">
-        <h3>Current Stats for <span id="stats-card"></span></h3>
-
-        <ul>
-          <li>
-            <strong>Last Reviewed At: </strong>
-            <span id="reviewedAt"></span>
-          </li>
-          <li>
-            <strong>Interval: </strong>
-            <span id="interval"></span>
-          </li>
-          <li>
-            <strong>Difficulty: </strong>
-            <span id="difficulty"></span>
-          </li>
-          <li>
-            <strong>Historical: </strong>
-            <span id="historical"></span>
-          </li>
-        </ul>
-      </main>
-    </div>
+    <div id="stats"></div>
   </body>
 
   <script src="main.js" type="module"></script>

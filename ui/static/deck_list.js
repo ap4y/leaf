@@ -1,7 +1,20 @@
 export default class DeckList {
-  async render() {
-    const decks = await this._fetchDecks();
-    document.getElementById("deckList").innerHTML = decks
+  constructor() {
+    this._el = document.createElement("ul");
+    this._el.classList.add("deck-list");
+  }
+
+  get element() {
+    return this._el;
+  }
+
+  set decks(decks) {
+    this._decks = decks;
+    this._renderItems();
+  }
+
+  _renderItems() {
+    this._el.innerHTML = this._decks
       .sort((a, b) => a.name > b.name)
       .map(
         ({ name, cards_ready, next_review_at }) =>
@@ -19,14 +32,6 @@ export default class DeckList {
 </li>`
       )
       .join("");
-  }
-
-  _fetchDecks() {
-    return window.fetch("decks").then(res => {
-      if (res.ok) return res.json();
-
-      return res.text().then(text => alert(`Failed to fetch decks: ${text}`));
-    });
   }
 
   _reviewStats(ready, next) {
