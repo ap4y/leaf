@@ -11,8 +11,8 @@ import (
 // StatsStore defines storage interface that is used for storing review stats.
 type StatsStore interface {
 	io.Closer
-	// RangeStats iterates over all stats in a Store.
-	RangeStats(deck string, rangeFunc func(card string, stats *Stats) bool) error
+	// RangeStats iterates over all stats in a Store. DB records will be boxed to provide algoritm.
+	RangeStats(deck string, smAlgo SupermemoAlgorithm, rangeFunc func(card string, stats *Stats) bool) error
 	// SaveStats saves stats for a card.
 	SaveStats(deck string, card string, stats *Stats) error
 }
@@ -31,7 +31,11 @@ func OpenBoltStore(filename string) (StatsStore, error) {
 	return &boltStore{db}, nil
 }
 
-func (db *boltStore) RangeStats(deck string, rangeFunc func(card string, stats *Stats) bool) error {
+func (db *boltStore) RangeStats(
+	deck string,
+	smAlgo SupermemoAlgorithm,
+	rangeFunc func(card string, stats *Stats) bool,
+) error {
 	return db.bolt.Update(func(tx *bolt.Tx) error {
 		b, err := tx.CreateBucketIfNotExists([]byte(deck))
 		if err != nil {
@@ -39,7 +43,7 @@ func (db *boltStore) RangeStats(deck string, rangeFunc func(card string, stats *
 		}
 
 		return b.ForEach(func(card, stats []byte) error {
-			s := DefaultStats()
+			s := NewStats(smAlgo)
 			if err := json.Unmarshal(stats, s); err != nil {
 				return fmt.Errorf("json: %s", err)
 			}

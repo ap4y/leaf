@@ -19,13 +19,14 @@ type DeckStats struct {
 
 // DeckManager manages set of decks.
 type DeckManager struct {
-	db    StatsStore
-	decks []*Deck
+	db     StatsStore
+	smAlgo SupermemoAlgorithm
+	decks  []*Deck
 }
 
 // NewDeckManager constructs a new DeckManager by reading all decks
-// from a given folder using prodived store.
-func NewDeckManager(path string, db StatsStore) (*DeckManager, error) {
+// from a given folder using provided store and provided supermemo algorithm.
+func NewDeckManager(path string, db StatsStore, smAlgo SupermemoAlgorithm) (*DeckManager, error) {
 	files, err := filepath.Glob(path + "/*.org")
 	if err != nil {
 		return nil, err
@@ -40,7 +41,7 @@ func NewDeckManager(path string, db StatsStore) (*DeckManager, error) {
 		decks = append(decks, deck)
 	}
 
-	return &DeckManager{db, decks}, nil
+	return &DeckManager{db, smAlgo, decks}, nil
 }
 
 // ReviewDecks returns stats for available decks, maximum of total
@@ -60,7 +61,7 @@ func (dm *DeckManager) ReviewDecks(total int) ([]*DeckStats, error) {
 }
 
 // ReviewSession initiates a new ReviewSession for a given deck name.
-func (dm *DeckManager) ReviewSession(deckName string, total int) (*ReviewSession, error) {
+func (dm *DeckManager) ReviewSession(deckName string, rater Rater, total int) (*ReviewSession, error) {
 	var deck *Deck
 	for _, d := range dm.decks {
 		if d.Name == deckName {
@@ -78,7 +79,7 @@ func (dm *DeckManager) ReviewSession(deckName string, total int) (*ReviewSession
 		return nil, err
 	}
 
-	return NewReviewSession(cards, func(question string, stats *Stats) error {
+	return NewReviewSession(cards, rater, func(question string, stats *Stats) error {
 		return dm.db.SaveStats(deckName, question, stats)
 	}), nil
 }
@@ -102,7 +103,7 @@ func (dm *DeckManager) DeckStats(deckName string) ([]*CardWithStats, error) {
 
 func (dm *DeckManager) deckStats(deck *Deck) ([]*CardWithStats, error) {
 	stats := make(map[string]*Stats)
-	err := dm.db.RangeStats(deck.Name, func(card string, s *Stats) bool {
+	err := dm.db.RangeStats(deck.Name, dm.smAlgo, func(card string, s *Stats) bool {
 		stats[card] = s
 		return true
 	})
@@ -115,7 +116,7 @@ func (dm *DeckManager) deckStats(deck *Deck) ([]*CardWithStats, error) {
 		if stats[card.Question] != nil {
 			result = append(result, &CardWithStats{card, stats[card.Question]})
 		} else {
-			result = append(result, &CardWithStats{card, DefaultStats()})
+			result = append(result, &CardWithStats{card, NewStats(dm.smAlgo)})
 		}
 	}
 

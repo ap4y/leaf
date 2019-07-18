@@ -9,12 +9,12 @@ import (
 
 func TestReviewSession(t *testing.T) {
 	cards := []*CardWithStats{
-		{Card{"foo", []string{"bar"}}, DefaultStats()},
-		{Card{"bar", []string{"baz"}}, DefaultStats()},
+		{Card{"foo", []string{"bar"}}, NewStats(SM2PlusCustom)},
+		{Card{"bar", []string{"baz"}}, NewStats(SM2PlusCustom)},
 	}
 
 	stats := make(map[string]*Stats)
-	s := NewReviewSession(cards, func(question string, s *Stats) error {
+	s := NewReviewSession(cards, HarshRater{}, func(question string, s *Stats) error {
 		stats[question] = s
 		return nil
 	})

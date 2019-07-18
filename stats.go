@@ -43,7 +43,6 @@ func (hr HarshRater) Rate(mistakes int) float64 {
 // Stats store SM2+ parameters for a Card.
 type Stats struct {
 	Supermemo
-	Rater
 }
 
 // CardWithStats joins Stats to a Card
@@ -52,9 +51,32 @@ type CardWithStats struct {
 	*Stats
 }
 
-// DefaultStats returns a new Stats initialized with default values.
-func DefaultStats() *Stats {
-	return &Stats{NewSupermemo2PlusCustom(), &HarshRater{}}
+// SupermemoAlgorithm defines supported supermemo algorithms.
+type SupermemoAlgorithm string
+
+const (
+	// SM2 represents Supermemo2 algorithm
+	SM2 SupermemoAlgorithm = "sm2"
+	// SM2Plus represents Supermemo2Plus algorithm
+	SM2Plus = "sm2+"
+	// SM2PlusCustom represents Supermemo2PlusCustom algorithm
+	SM2PlusCustom = "sm2+c"
+)
+
+// NewStats returns a new Stats initialized with provided algorithm
+// with default values. Supported values: sm2, sm2+, sm2+c. If smAlgo
+// is missing or unknown will default to Supermemo2PlusCustom.
+func NewStats(smAlgo SupermemoAlgorithm) *Stats {
+	var sm Supermemo
+	switch smAlgo {
+	case SM2:
+		sm = NewSupermemo2()
+	case SM2Plus:
+		sm = NewSupermemo2Plus()
+	default:
+		sm = NewSupermemo2PlusCustom()
+	}
+	return &Stats{sm}
 }
 
 // IsReady signals whether card is read for review.

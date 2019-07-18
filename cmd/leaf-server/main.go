@@ -12,6 +12,7 @@ var (
 	db      = flag.String("db", "leaf.db", "database location")
 	count   = flag.Int("count", 20, "cards to review")
 	addr    = flag.String("addr", ":8000", "addr for Web UI")
+	algo    = flag.String("algo", "sm2+c", "spaced repetition algoritm to use")
 	devMode = flag.Bool("dev", false, "use local dev assets")
 )
 
@@ -25,12 +26,12 @@ func main() {
 
 	defer db.Close()
 
-	dm, err := leaf.NewDeckManager("./", db)
+	dm, err := leaf.NewDeckManager("./", db, leaf.SupermemoAlgorithm(*algo))
 	if err != nil {
 		log.Fatal("Failed to initialise deck manager: ", err)
 	}
 
-	srv := ui.NewServer(dm, *count)
+	srv := ui.NewServer(dm, &leaf.HarshRater{}, *count)
 
 	if err := srv.Serve(*addr, *devMode); err != nil {
 		log.Fatal("Failed to render: ", err)

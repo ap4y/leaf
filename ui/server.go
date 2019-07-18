@@ -18,14 +18,16 @@ type statsResponse struct {
 
 // Server implements web ui for reviews.
 type Server struct {
-	dm             *leaf.DeckManager
+	dm    *leaf.DeckManager
+	rater leaf.Rater
+
 	cardsPerReview int
 	sessionState   *SessionState
 }
 
 // NewServer construct a new Server instance.
-func NewServer(dm *leaf.DeckManager, cardsPerReview int) *Server {
-	return &Server{dm: dm, cardsPerReview: cardsPerReview}
+func NewServer(dm *leaf.DeckManager, rater leaf.Rater, cardsPerReview int) *Server {
+	return &Server{dm: dm, rater: rater, cardsPerReview: cardsPerReview}
 }
 
 // Serve starts listening loop on addr.
@@ -66,7 +68,7 @@ func (srv *Server) startSession(w http.ResponseWriter, req *http.Request) {
 	}
 
 	deckName := strings.Replace(req.URL.Path, "/start/", "", -1)
-	session, err := srv.dm.ReviewSession(deckName, srv.cardsPerReview)
+	session, err := srv.dm.ReviewSession(deckName, srv.rater, srv.cardsPerReview)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 		return

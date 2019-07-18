@@ -18,7 +18,7 @@ func TestDeckManager(t *testing.T) {
 	db, err := OpenBoltStore(tmpfile.Name())
 	require.NoError(t, err)
 
-	dm, err := NewDeckManager(".", db)
+	dm, err := NewDeckManager(".", db, SM2PlusCustom)
 	require.NoError(t, err)
 
 	t.Run("ReviewDecks", func(t *testing.T) {
@@ -33,18 +33,18 @@ func TestDeckManager(t *testing.T) {
 	})
 
 	t.Run("ReviewSession", func(t *testing.T) {
-		session, err := dm.ReviewSession("Hiragana", 20)
+		session, err := dm.ReviewSession("Hiragana", HarshRater{}, 20)
 		require.NoError(t, err)
 		assert.Equal(t, 20, session.Total())
 
 		question := session.Next()
 		session.Answer("foo")
-		err = db.RangeStats("Hiragana", func(card string, s *Stats) bool {
+		err = db.RangeStats("Hiragana", SM2PlusCustom, func(card string, s *Stats) bool {
 			if card != question {
 				return true
 			}
 
-			sm := s.Supermemo.(*Supermemo2Plus)
+			sm := s.Supermemo.(*Supermemo2PlusCustom)
 			assert.InDelta(t, 0.45, sm.Difficulty, 0.01)
 			assert.InDelta(t, 0.2, sm.Interval, 0.01)
 			return false

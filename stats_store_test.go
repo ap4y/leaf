@@ -17,18 +17,18 @@ func TestStatsDB(t *testing.T) {
 	db, err := OpenBoltStore(tmpfile.Name())
 	require.NoError(t, err)
 
-	s1 := Stats{&Supermemo2PlusCustom{Supermemo2Plus{Difficulty: 1}}, &HarshRater{}}
+	s1 := Stats{&Supermemo2PlusCustom{Supermemo2Plus{Difficulty: 1}}}
 	require.NoError(t, db.SaveStats("deck1", "foo", &s1))
 
-	s2 := Stats{&Supermemo2PlusCustom{Supermemo2Plus{Difficulty: 2}}, &HarshRater{}}
+	s2 := Stats{&Supermemo2PlusCustom{Supermemo2Plus{Difficulty: 2}}}
 	require.NoError(t, db.SaveStats("deck1", "bar", &s2))
 
-	s3 := Stats{&Supermemo2PlusCustom{Supermemo2Plus{Difficulty: 3}}, &HarshRater{}}
+	s3 := Stats{&Supermemo2PlusCustom{Supermemo2Plus{Difficulty: 3}}}
 	require.NoError(t, db.SaveStats("deck2", "foo", &s3))
 
 	cards := []string{}
 	stats := []Stats{}
-	err = db.RangeStats("deck1", func(card string, s *Stats) bool {
+	err = db.RangeStats("deck1", SM2PlusCustom, func(card string, s *Stats) bool {
 		cards = append(cards, card)
 		stats = append(stats, *s)
 		return true

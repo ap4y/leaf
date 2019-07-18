@@ -10,12 +10,12 @@ import (
 
 func TestSessionState(t *testing.T) {
 	cards := []*leaf.CardWithStats{
-		{leaf.Card{"foo", []string{"bar"}}, leaf.DefaultStats()},
-		{leaf.Card{"bar", []string{"baz"}}, leaf.DefaultStats()},
+		{leaf.Card{"foo", []string{"bar"}}, leaf.NewStats(leaf.SM2Plus)},
+		{leaf.Card{"bar", []string{"baz"}}, leaf.NewStats(leaf.SM2Plus)},
 	}
 
 	stats := make(map[string]*leaf.Stats)
-	s := leaf.NewReviewSession(cards, func(question string, s *leaf.Stats) error {
+	s := leaf.NewReviewSession(cards, &leaf.HarshRater{}, func(question string, s *leaf.Stats) error {
 		stats[question] = s
 		return nil
 	})

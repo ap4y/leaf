@@ -22,10 +22,10 @@ func TestWebUI(t *testing.T) {
 	db, err := leaf.OpenBoltStore(tmpfile.Name())
 	require.NoError(t, err)
 
-	dm, err := leaf.NewDeckManager("..", db)
+	dm, err := leaf.NewDeckManager("..", db, leaf.SM2PlusCustom)
 	require.NoError(t, err)
 
-	srv := NewServer(dm, 20)
+	srv := NewServer(dm, &leaf.HarshRater{}, 20)
 
 	t.Run("listDecks", func(t *testing.T) {
 		req := httptest.NewRequest("GET", "http://example.com/decks", nil)
