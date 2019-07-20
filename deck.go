@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 )
 
 // Card represents a single card in a Deck. Each card may have
@@ -23,6 +24,9 @@ func (c *Card) Answer() string {
 type Deck struct {
 	Name  string
 	Cards []Card
+
+	modtime  time.Time
+	filename string
 }
 
 // OpenDeck loads deck from an org file. File format is:
@@ -36,7 +40,44 @@ func OpenDeck(filename string) (*Deck, error) {
 		return nil, fmt.Errorf("file: %s", err)
 	}
 
-	deck := &Deck{}
+	stat, err := f.Stat()
+	if err != nil {
+		return nil, fmt.Errorf("file: %s", err)
+	}
+
+	deck := &Deck{modtime: stat.ModTime(), filename: filename}
+	if err := deck.load(f); err != nil {
+		return nil, err
+	}
+
+	return deck, nil
+}
+
+// Reload compares ModTime on deck file and reloads cards if necessary.
+func (deck *Deck) Reload() error {
+	stat, err := os.Stat(deck.filename)
+	if err != nil {
+		return fmt.Errorf("file: %s", err)
+	}
+
+	if deck.modtime.UnixNano() >= stat.ModTime().UnixNano() {
+		return nil
+	}
+
+	f, err := os.Open(deck.filename)
+	if err != nil {
+		return fmt.Errorf("file: %s", err)
+	}
+
+	if err := deck.load(f); err != nil {
+		return err
+	}
+
+	deck.modtime = stat.ModTime()
+	return nil
+}
+
+func (deck *Deck) load(f *os.File) error {
 	cards := make(map[string][]string)
 	scanner := bufio.NewScanner(f)
 	var question string
@@ -53,11 +94,13 @@ func OpenDeck(filename string) (*Deck, error) {
 	}
 
 	if err := scanner.Err(); err != nil {
-		return nil, fmt.Errorf("scanner: %s", err)
+		return fmt.Errorf("scanner: %s", err)
 	}
 
+	deck.Cards = make([]Card, 0)
 	for question, sides := range cards {
 		deck.Cards = append(deck.Cards, Card{question, sides})
 	}
-	return deck, nil
+
+	return nil
 }

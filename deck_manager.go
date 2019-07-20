@@ -124,6 +124,11 @@ func (dm *DeckManager) deckStats(deck *Deck) ([]*CardWithStats, error) {
 }
 
 func (dm *DeckManager) reviewDeck(deck *Deck, total int) (nextReviewAt time.Time, cards []*CardWithStats, err error) {
+	if fErr := deck.Reload(); fErr != nil {
+		err = fErr
+		return
+	}
+
 	stats, sErr := dm.deckStats(deck)
 	if err != nil {
 		err = sErr
