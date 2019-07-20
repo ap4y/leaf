@@ -1,10 +1,7 @@
 const template = `
 <header>
-  <h3>
-    Deck: <span id="deck"></span>
-    <br>
-    Progress: <span id="progress"></span>
-  </h3>
+  <h3>Deck: <span id="deck"></span></h3>
+  <h5>Progress: <span id="progress"></span></h5>
 </header>
 
 <main class="session container">
