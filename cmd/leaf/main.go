@@ -14,7 +14,8 @@ import (
 )
 
 var (
-	db    = flag.String("db", "leaf.db", "database location")
+	decks = flag.String("decks", ".", "deck files location")
+	db    = flag.String("db", "leaf.db", "stats database location")
 	count = flag.Int("count", 20, "cards to review")
 	algo  = flag.String("algo", "sm2+c", "spaced repetition algoritm to use")
 )
@@ -34,7 +35,7 @@ func main() {
 
 	defer db.Close()
 
-	dm, err := leaf.NewDeckManager("./", db, leaf.SupermemoAlgorithm(*algo))
+	dm, err := leaf.NewDeckManager(*decks, db, leaf.SupermemoAlgorithm(*algo))
 	if err != nil {
 		log.Fatal("Failed to initialise deck manager: ", err)
 	}

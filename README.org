@@ -26,11 +26,10 @@ Leaf provides 2 different versions:
 
 Both utilities have the following configuration options:
 
+- ~-decks .~ is a path to a folder with deck files.
 - ~-db leaf.db~ is a location of a stats DB that contains spaced
   repetition variables for your decks.
-
 - ~-count 20~ is maximum amount of cards per review.
-
 - ~-algo sm2+c~ is an spaced repetition algorithm to use. All possible values can be found [[https://github.com/ap4y/leaf/blob/master/stats.go#L57-L64][here]].
 
 For ~leaf-server~ you can also adjust address to start server on via ~-addr :8000~.
