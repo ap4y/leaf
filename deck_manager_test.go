@@ -22,7 +22,7 @@ func TestDeckManager(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Run("ReviewDecks", func(t *testing.T) {
-		decks, err := dm.ReviewDecks(100)
+		decks, err := dm.ReviewDecks()
 		require.NoError(t, err)
 		require.Len(t, decks, 1)
 

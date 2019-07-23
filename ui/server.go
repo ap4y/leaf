@@ -50,7 +50,7 @@ func (srv *Server) listDecks(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	decks, err := srv.dm.ReviewDecks(100)
+	decks, err := srv.dm.ReviewDecks()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 		return

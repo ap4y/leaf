@@ -44,12 +44,11 @@ func NewDeckManager(path string, db StatsStore, smAlgo SupermemoAlgorithm) (*Dec
 	return &DeckManager{db, smAlgo, decks}, nil
 }
 
-// ReviewDecks returns stats for available decks, maximum of total
-// entries will be returned.
-func (dm *DeckManager) ReviewDecks(total int) ([]*DeckStats, error) {
+// ReviewDecks returns stats for available decks.
+func (dm *DeckManager) ReviewDecks() ([]*DeckStats, error) {
 	result := make([]*DeckStats, 0)
 	for _, deck := range dm.decks {
-		nextReviewAt, reviewDeck, err := dm.reviewDeck(deck, total)
+		nextReviewAt, reviewDeck, err := dm.reviewDeck(deck, -1)
 		if err != nil {
 			return nil, err
 		}
@@ -145,7 +144,7 @@ func (dm *DeckManager) reviewDeck(deck *Deck, total int) (nextReviewAt time.Time
 
 	cards = make([]*CardWithStats, 0)
 	for _, s := range stats {
-		if len(cards) == total {
+		if total > 0 && len(cards) == total {
 			break
 		}
 
