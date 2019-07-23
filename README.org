@@ -5,6 +5,8 @@
  access and support for various spaced repetition curves (including
  custom).
 
+[[https://raw.githubusercontent.com/ap4y/leaf/master/screenshot.png]]
+
 ** Getting started
 
 *Leaf* is a [[https://golang.org/][golang]] application and you are going to need golang
