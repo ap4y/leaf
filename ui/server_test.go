@@ -22,7 +22,7 @@ func TestWebUI(t *testing.T) {
 	db, err := leaf.OpenBoltStore(tmpfile.Name())
 	require.NoError(t, err)
 
-	dm, err := leaf.NewDeckManager("..", db, leaf.SM2PlusCustom)
+	dm, err := leaf.NewDeckManager("../fixtures", db, leaf.SM2PlusCustom)
 	require.NoError(t, err)
 
 	srv := NewServer(dm, &leaf.HarshRater{}, 20)

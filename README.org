@@ -48,7 +48,7 @@ Answer 2
 #+END_SRC
 
 Such file will be parsed as a deck named _Sample_ and it will have 2
-cards. For a full deck example check [[https://raw.githubusercontent.com/ap4y/leaf/master/hiragana.org][hiragana]] deck.
+cards. For a full deck example check [[https://raw.githubusercontent.com/ap4y/leaf/master/fixtures/hiragana.org][hiragana]] deck.
 
 Spaced repetition variables are stored in a separate file in a binary
 database. You can edit deck files at any time and changes will be

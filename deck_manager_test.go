@@ -18,7 +18,7 @@ func TestDeckManager(t *testing.T) {
 	db, err := OpenBoltStore(tmpfile.Name())
 	require.NoError(t, err)
 
-	dm, err := NewDeckManager(".", db, SM2PlusCustom)
+	dm, err := NewDeckManager("./fixtures", db, SM2PlusCustom)
 	require.NoError(t, err)
 
 	t.Run("ReviewDecks", func(t *testing.T) {

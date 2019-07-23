@@ -13,7 +13,7 @@ import (
 
 func TestDeck(t *testing.T) {
 	t.Run("OpenDeck", func(t *testing.T) {
-		deck, err := OpenDeck("hiragana.org")
+		deck, err := OpenDeck("./fixtures/hiragana.org")
 		require.NoError(t, err)
 		assert.Equal(t, "Hiragana", deck.Name)
 		require.Len(t, deck.Cards, 46)
