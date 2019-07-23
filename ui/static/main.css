@@ -29,7 +29,7 @@ h1 {
 }
 
 .title {
-  font-size: 2.566em;
+  font-size: 3.247em;
 }
 
 h2 {
@@ -126,10 +126,21 @@ a:visited {
 
 .session #input {
   height: 35px;
-  padding-right: 1em;
+  margin: 0 0.5em 0 0;
   background: none;
   border: none;
   font-family: monospace;
+  font-size: 1em;
+}
+
+.session input[type="submit"] {
+  -webkit-appearance: none;
+  height: 35px;
+  width: 35px;
+
+  background: #eceff4;
+  border: none;
+  border-radius: 3px;
 }
 
 .session p {
