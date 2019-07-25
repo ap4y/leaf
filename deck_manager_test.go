@@ -44,7 +44,7 @@ func TestDeckManager(t *testing.T) {
 				return true
 			}
 
-			sm := s.Supermemo.(*Supermemo2PlusCustom)
+			sm := s.SRSAlgorithm.(*Supermemo2PlusCustom)
 			assert.InDelta(t, 0.45, sm.Difficulty, 0.01)
 			assert.InDelta(t, 0.2, sm.Interval, 0.01)
 			return false
@@ -60,7 +60,7 @@ func TestDeckManager(t *testing.T) {
 
 		s := stats[0]
 		assert.NotEmpty(t, s.Question)
-		sm := s.Supermemo.(*Supermemo2PlusCustom)
+		sm := s.SRSAlgorithm.(*Supermemo2PlusCustom)
 		assert.InDelta(t, 0.3, sm.Difficulty, 0.01)
 	})
 }

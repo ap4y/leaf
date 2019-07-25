@@ -32,7 +32,7 @@ func (eb *Ebisu) NextReviewAt() time.Time {
 }
 
 // Less defines card order for the review.
-func (eb *Ebisu) Less(other Supermemo) bool {
+func (eb *Ebisu) Less(other SRSAlgorithm) bool {
 	return eb.predictRecall() > other.(*Ebisu).predictRecall()
 }
 

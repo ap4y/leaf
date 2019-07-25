@@ -93,9 +93,9 @@ func TestEbisuLess(t *testing.T) {
 	eb1 := &Ebisu{LastReviewedAt: time.Now().Add(-1 * time.Hour), Alpha: 4, Beta: 4, Interval: 24}
 	eb2 := &Ebisu{LastReviewedAt: time.Now().Add(-1 * time.Hour), Alpha: 2, Beta: 4, Interval: 24}
 
-	slice := []Supermemo{eb1, eb2}
+	slice := []SRSAlgorithm{eb1, eb2}
 	sort.Slice(slice, func(i, j int) bool { return slice[j].Less(slice[i]) })
-	assert.Equal(t, []Supermemo{eb2, eb1}, slice)
+	assert.Equal(t, []SRSAlgorithm{eb2, eb1}, slice)
 }
 
 func TestBetaln(t *testing.T) {

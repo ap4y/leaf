@@ -33,7 +33,7 @@ func (sm *Supermemo2) NextReviewAt() time.Time {
 }
 
 // Less defines card order for the review.
-func (sm *Supermemo2) Less(other Supermemo) bool {
+func (sm *Supermemo2) Less(other SRSAlgorithm) bool {
 	return sm.Interval > other.(*Supermemo2).Interval
 }
 

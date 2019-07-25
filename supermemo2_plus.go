@@ -37,7 +37,7 @@ func (sm *Supermemo2Plus) NextReviewAt() time.Time {
 }
 
 // Less defines card order for the review.
-func (sm *Supermemo2Plus) Less(other Supermemo) bool {
+func (sm *Supermemo2Plus) Less(other SRSAlgorithm) bool {
 	return sm.PercentOverdue() < other.(*Supermemo2Plus).PercentOverdue()
 }
 

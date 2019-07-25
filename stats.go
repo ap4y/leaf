@@ -8,8 +8,8 @@ import (
 
 const ratingSuccess = 0.6
 
-// Supermemo calculates review intervals
-type Supermemo interface {
+// SRSAlgorithm calculates review intervals
+type SRSAlgorithm interface {
 	json.Marshaler
 	json.Unmarshaler
 
@@ -18,7 +18,7 @@ type Supermemo interface {
 	// NextReviewAt returns next review timestamp for a card.
 	NextReviewAt() time.Time
 	// Less defines card order for the review.
-	Less(other Supermemo) bool
+	Less(other SRSAlgorithm) bool
 }
 
 // Rater rates review attempt based on amount of mistakes. Rating
@@ -42,7 +42,7 @@ func (hr HarshRater) Rate(mistakes int) float64 {
 
 // Stats store SM2+ parameters for a Card.
 type Stats struct {
-	Supermemo
+	SRSAlgorithm
 }
 
 // CardWithStats joins Stats to a Card
@@ -69,7 +69,7 @@ const (
 // with default values. Supported values: sm2, sm2+, sm2+c. If smAlgo
 // is missing or unknown will default to Supermemo2PlusCustom.
 func NewStats(srs SRS) *Stats {
-	var sm Supermemo
+	var sm SRSAlgorithm
 	switch srs {
 	case SRSSupermemo2:
 		sm = NewSupermemo2()

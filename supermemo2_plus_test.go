@@ -36,9 +36,9 @@ func TestSM2PlusLess(t *testing.T) {
 	sm1 := &Supermemo2Plus{LastReviewedAt: time.Now().Add(-time.Hour), Interval: 1}
 	sm2 := &Supermemo2Plus{LastReviewedAt: time.Now().Add(-48 * time.Hour), Interval: 1}
 
-	slice := []Supermemo{sm1, sm2}
+	slice := []SRSAlgorithm{sm1, sm2}
 	sort.Slice(slice, func(i, j int) bool { return slice[j].Less(slice[i]) })
-	assert.Equal(t, []Supermemo{sm2, sm1}, slice)
+	assert.Equal(t, []SRSAlgorithm{sm2, sm1}, slice)
 }
 
 func TestSM2PlusRecord(t *testing.T) {

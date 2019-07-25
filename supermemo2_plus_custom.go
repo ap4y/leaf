@@ -17,7 +17,7 @@ func NewSupermemo2PlusCustom() *Supermemo2PlusCustom {
 }
 
 // Less defines card order for the review.
-func (sm *Supermemo2PlusCustom) Less(other Supermemo) bool {
+func (sm *Supermemo2PlusCustom) Less(other SRSAlgorithm) bool {
 	return sm.PercentOverdue() < other.(*Supermemo2PlusCustom).PercentOverdue()
 }
 
