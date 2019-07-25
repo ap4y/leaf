@@ -1,6 +1,7 @@
 package leaf
 
 import (
+	"encoding/json"
 	"math"
 	"time"
 )
@@ -17,11 +18,12 @@ type Ebisu struct {
 	Alpha          float64
 	Beta           float64
 	Interval       float64
+	Historical     []IntervalSnapshot
 }
 
 // NewEbisu consturcts a new Ebisu instance.
 func NewEbisu() *Ebisu {
-	return &Ebisu{time.Now(), 3, 3, 24}
+	return &Ebisu{time.Now(), 3, 3, 24, make([]IntervalSnapshot, 0)}
 }
 
 // NextReviewAt returns next review timestamp for a card.
@@ -29,9 +31,9 @@ func (eb *Ebisu) NextReviewAt() time.Time {
 	return eb.LastReviewedAt.Add(time.Duration(eb.Interval * float64(time.Hour)))
 }
 
-// SortParam returns values that should used as a review order for cards
-func (eb *Ebisu) SortParam() float64 {
-	return eb.predictRecall()
+// Less defines card order for the review.
+func (eb *Ebisu) Less(other Supermemo) bool {
+	return eb.predictRecall() > other.(*Ebisu).predictRecall()
 }
 
 // Advance advances supermemo state for a card.
@@ -40,11 +42,48 @@ func (eb *Ebisu) Advance(rating float64) (interval float64) {
 	elapsed := float64(time.Since(eb.LastReviewedAt)) / float64(time.Hour)
 	proposed := updateRecall(model, rating >= ratingSuccess, float64(elapsed), true, eb.Interval)
 
+	eb.Historical = append(
+		eb.Historical,
+		IntervalSnapshot{time.Now().Unix(), eb.Interval, 0},
+	)
 	eb.Alpha = proposed.Alpha
 	eb.Beta = proposed.Beta
 	eb.Interval = proposed.T
 	eb.LastReviewedAt = time.Now()
 	return eb.Interval
+}
+
+// MarshalJSON implements json.Marshaller for Supermemo2
+func (eb *Ebisu) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		LastReviewedAt time.Time
+		Alpha          float64
+		Beta           float64
+		Interval       float64
+		Historical     []IntervalSnapshot
+	}{eb.LastReviewedAt, eb.Alpha, eb.Beta, eb.Interval, eb.Historical})
+}
+
+// UnmarshalJSON implements json.Unmarshaller for Supermemo2
+func (eb *Ebisu) UnmarshalJSON(b []byte) error {
+	payload := &struct {
+		LastReviewedAt time.Time
+		Alpha          float64
+		Beta           float64
+		Interval       float64
+		Historical     []IntervalSnapshot
+	}{}
+
+	if err := json.Unmarshal(b, payload); err != nil {
+		return err
+	}
+
+	eb.LastReviewedAt = payload.LastReviewedAt
+	eb.Alpha = payload.Alpha
+	eb.Beta = payload.Beta
+	eb.Interval = payload.Interval
+	eb.Historical = payload.Historical
+	return nil
 }
 
 func (eb *Ebisu) predictRecall() float64 {

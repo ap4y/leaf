@@ -2,6 +2,7 @@ package leaf
 
 import (
 	"fmt"
+	"sort"
 	"testing"
 	"time"
 
@@ -28,7 +29,13 @@ func TestEbisu(t *testing.T) {
 
 	for idx, tc := range cases {
 		t.Run(fmt.Sprintf("Advance %d", idx), func(t *testing.T) {
-			eb := &Ebisu{time.Now().Add(toHourDuration(-1 * tc.op[1])), tc.model[0], tc.model[1], tc.model[2]}
+			eb := &Ebisu{
+				time.Now().Add(toHourDuration(-1 * tc.op[1])),
+				tc.model[0],
+				tc.model[1],
+				tc.model[2],
+				make([]IntervalSnapshot, 0),
+			}
 			eb.Advance(tc.op[0])
 			assert.InDelta(t, tc.post[0], eb.Alpha, 0.01)
 			assert.InDelta(t, tc.post[1], eb.Beta, 0.01)
@@ -72,6 +79,23 @@ func TestEbisuRecord(t *testing.T) {
 
 		assert.InDeltaSlice(t, []float64{1, 1, 1, 3.06, 1.27, 1.27, 1.27, 3.89}, intervals, 0.01)
 	})
+}
+
+func TestEbisuPredictRecall(t *testing.T) {
+	eb := &Ebisu{LastReviewedAt: time.Now().Add(-1 * time.Hour), Alpha: 4, Beta: 4, Interval: 24}
+	assert.InDelta(t, 0.96, eb.predictRecall(), 0.01)
+
+	eb = &Ebisu{LastReviewedAt: time.Now().Add(-1 * time.Hour), Alpha: 2, Beta: 4, Interval: 24}
+	assert.InDelta(t, 0.94, eb.predictRecall(), 0.01)
+}
+
+func TestEbisuLess(t *testing.T) {
+	eb1 := &Ebisu{LastReviewedAt: time.Now().Add(-1 * time.Hour), Alpha: 4, Beta: 4, Interval: 24}
+	eb2 := &Ebisu{LastReviewedAt: time.Now().Add(-1 * time.Hour), Alpha: 2, Beta: 4, Interval: 24}
+
+	slice := []Supermemo{eb1, eb2}
+	sort.Slice(slice, func(i, j int) bool { return slice[j].Less(slice[i]) })
+	assert.Equal(t, []Supermemo{eb2, eb1}, slice)
 }
 
 func TestBetaln(t *testing.T) {
