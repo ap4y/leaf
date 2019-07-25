@@ -61,6 +61,7 @@ to define new ones. Following algorithms are supported as of now:
 - [[https://www.supermemo.com/en/archives1990-2015/english/ol/sm2][supermemo2]]
 - [[http://www.blueraja.com/blog/477/a-better-spaced-repetition-learning-algorithm-sm2][supermemo2+]]
 - Custom curve for supermemo2+. I found it works better for me.
+- [[https://fasiha.github.io/ebisu.js/][ebisu]]
 
 You can find calculated intervals in corresponding test files. Check
 [[https://github.com/ap4y/leaf/blob/master/stats.go#L12-L22][Supermemo]] interface to define a new algorithm or curve.
