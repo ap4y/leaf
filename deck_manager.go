@@ -135,7 +135,7 @@ func (dm *DeckManager) reviewDeck(deck *Deck, total int) (nextReviewAt time.Time
 	}
 
 	sort.Slice(stats, func(i, j int) bool {
-		return stats[i].SortParam() > stats[j].SortParam()
+		return stats[j].Supermemo.Less(stats[i].Stats.Supermemo)
 	})
 
 	if len(stats) > 0 {

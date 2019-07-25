@@ -3,6 +3,7 @@ package leaf
 import (
 	"encoding/json"
 	"fmt"
+	"sort"
 	"testing"
 	"time"
 
@@ -29,6 +30,15 @@ func TestSM2PlusPercentOverdue(t *testing.T) {
 
 	sm = Supermemo2Plus{LastReviewedAt: time.Now().Add(-48 * time.Hour), Interval: 1}
 	assert.InDelta(t, 2.0, sm.PercentOverdue(), 0.01)
+}
+
+func TestSM2PlusLess(t *testing.T) {
+	sm1 := &Supermemo2Plus{LastReviewedAt: time.Now().Add(-time.Hour), Interval: 1}
+	sm2 := &Supermemo2Plus{LastReviewedAt: time.Now().Add(-48 * time.Hour), Interval: 1}
+
+	slice := []Supermemo{sm1, sm2}
+	sort.Slice(slice, func(i, j int) bool { return slice[j].Less(slice[i]) })
+	assert.Equal(t, []Supermemo{sm2, sm1}, slice)
 }
 
 func TestSM2PlusRecord(t *testing.T) {

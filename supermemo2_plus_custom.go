@@ -16,6 +16,11 @@ func NewSupermemo2PlusCustom() *Supermemo2PlusCustom {
 	return &Supermemo2PlusCustom{*sm}
 }
 
+// Less defines card order for the review.
+func (sm *Supermemo2PlusCustom) Less(other Supermemo) bool {
+	return sm.PercentOverdue() < other.(*Supermemo2PlusCustom).PercentOverdue()
+}
+
 // Advance advances supermemo state for a card.
 func (sm *Supermemo2PlusCustom) Advance(rating float64) float64 {
 	success := rating >= ratingSuccess

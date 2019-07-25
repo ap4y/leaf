@@ -36,9 +36,9 @@ func (sm *Supermemo2Plus) NextReviewAt() time.Time {
 	return sm.LastReviewedAt.Add(time.Duration(24*sm.Interval) * time.Hour)
 }
 
-// SortParam returns values that should used as a review order for cards
-func (sm *Supermemo2Plus) SortParam() float64 {
-	return sm.PercentOverdue()
+// Less defines card order for the review.
+func (sm *Supermemo2Plus) Less(other Supermemo) bool {
+	return sm.PercentOverdue() < other.(*Supermemo2Plus).PercentOverdue()
 }
 
 // PercentOverdue returns corresponding SM2+ value for a Card.

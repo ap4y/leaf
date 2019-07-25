@@ -32,9 +32,9 @@ func (sm *Supermemo2) NextReviewAt() time.Time {
 	return sm.LastReviewedAt.Add(time.Duration(24*sm.Interval) * time.Hour)
 }
 
-// SortParam returns values that should used as a review order for cards
-func (sm *Supermemo2) SortParam() float64 {
-	return sm.Interval
+// Less defines card order for the review.
+func (sm *Supermemo2) Less(other Supermemo) bool {
+	return sm.Interval > other.(*Supermemo2).Interval
 }
 
 // Advance advances supermemo state for a card.

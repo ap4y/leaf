@@ -17,8 +17,8 @@ type Supermemo interface {
 	Advance(rating float64) (interval float64)
 	// NextReviewAt returns next review timestamp for a card.
 	NextReviewAt() time.Time
-	// SortParam returns values that should used as a review order for cards
-	SortParam() float64
+	// Less defines card order for the review.
+	Less(other Supermemo) bool
 }
 
 // Rater rates review attempt based on amount of mistakes. Rating
