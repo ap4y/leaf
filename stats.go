@@ -51,28 +51,32 @@ type CardWithStats struct {
 	*Stats
 }
 
-// SupermemoAlgorithm defines supported supermemo algorithms.
-type SupermemoAlgorithm string
+// SRS defines supported spaced-repetiton algorithms.
+type SRS string
 
 const (
-	// SM2 represents Supermemo2 algorithm
-	SM2 SupermemoAlgorithm = "sm2"
-	// SM2Plus represents Supermemo2Plus algorithm
-	SM2Plus = "sm2+"
-	// SM2PlusCustom represents Supermemo2PlusCustom algorithm
-	SM2PlusCustom = "sm2+c"
+	// SRSSupermemo2 represents Supermemo2 algorithm
+	SRSSupermemo2 SRS = "sm2"
+	// SRSSupermemo2Plus represents Supermemo2Plus algorithm
+	SRSSupermemo2Plus = "sm2+"
+	// SRSSupermemo2PlusCustom represents Supermemo2PlusCustom algorithm
+	SRSSupermemo2PlusCustom = "sm2+c"
+	// SRSEbisu represents Ebisu algorithm
+	SRSEbisu = "ebs"
 )
 
 // NewStats returns a new Stats initialized with provided algorithm
 // with default values. Supported values: sm2, sm2+, sm2+c. If smAlgo
 // is missing or unknown will default to Supermemo2PlusCustom.
-func NewStats(smAlgo SupermemoAlgorithm) *Stats {
+func NewStats(srs SRS) *Stats {
 	var sm Supermemo
-	switch smAlgo {
-	case SM2:
+	switch srs {
+	case SRSSupermemo2:
 		sm = NewSupermemo2()
-	case SM2Plus:
+	case SRSSupermemo2Plus:
 		sm = NewSupermemo2Plus()
+	case SRSEbisu:
+		sm = NewEbisu()
 	default:
 		sm = NewSupermemo2PlusCustom()
 	}

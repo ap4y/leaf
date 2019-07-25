@@ -10,8 +10,8 @@ import (
 
 func TestSessionState(t *testing.T) {
 	cards := []*leaf.CardWithStats{
-		{leaf.Card{"foo", []string{"bar"}}, leaf.NewStats(leaf.SM2Plus)},
-		{leaf.Card{"bar", []string{"baz"}}, leaf.NewStats(leaf.SM2Plus)},
+		{leaf.Card{"foo", []string{"bar"}}, leaf.NewStats(leaf.SRSSupermemo2Plus)},
+		{leaf.Card{"bar", []string{"baz"}}, leaf.NewStats(leaf.SRSSupermemo2Plus)},
 	}
 
 	stats := make(map[string]*leaf.Stats)

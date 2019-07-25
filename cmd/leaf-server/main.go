@@ -27,7 +27,7 @@ func main() {
 
 	defer db.Close()
 
-	dm, err := leaf.NewDeckManager(*decks, db, leaf.SupermemoAlgorithm(*algo))
+	dm, err := leaf.NewDeckManager(*decks, db, leaf.SRS(*algo))
 	if err != nil {
 		log.Fatal("Failed to initialise deck manager: ", err)
 	}

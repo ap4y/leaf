@@ -12,7 +12,7 @@ import (
 type StatsStore interface {
 	io.Closer
 	// RangeStats iterates over all stats in a Store. DB records will be boxed to provide algoritm.
-	RangeStats(deck string, smAlgo SupermemoAlgorithm, rangeFunc func(card string, stats *Stats) bool) error
+	RangeStats(deck string, srs SRS, rangeFunc func(card string, stats *Stats) bool) error
 	// SaveStats saves stats for a card.
 	SaveStats(deck string, card string, stats *Stats) error
 }
@@ -33,7 +33,7 @@ func OpenBoltStore(filename string) (StatsStore, error) {
 
 func (db *boltStore) RangeStats(
 	deck string,
-	smAlgo SupermemoAlgorithm,
+	srs SRS,
 	rangeFunc func(card string, stats *Stats) bool,
 ) error {
 	return db.bolt.Update(func(tx *bolt.Tx) error {
@@ -43,7 +43,7 @@ func (db *boltStore) RangeStats(
 		}
 
 		return b.ForEach(func(card, stats []byte) error {
-			s := NewStats(smAlgo)
+			s := NewStats(srs)
 			if err := json.Unmarshal(stats, s); err != nil {
 				return fmt.Errorf("json: %s", err)
 			}

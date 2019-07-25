@@ -15,7 +15,7 @@ func TestIsReady(t *testing.T) {
 	s = &Stats{&Supermemo2Plus{LastReviewedAt: time.Now().Add(-24 * time.Hour), Interval: 1}}
 	assert.True(t, s.IsReady())
 
-	s = NewStats(SM2Plus)
+	s = NewStats(SRSSupermemo2Plus)
 	assert.True(t, s.IsReady())
 	s.Advance(5)
 	assert.False(t, s.IsReady())

@@ -18,7 +18,7 @@ func TestDeckManager(t *testing.T) {
 	db, err := OpenBoltStore(tmpfile.Name())
 	require.NoError(t, err)
 
-	dm, err := NewDeckManager("./fixtures", db, SM2PlusCustom)
+	dm, err := NewDeckManager("./fixtures", db, SRSSupermemo2PlusCustom)
 	require.NoError(t, err)
 
 	t.Run("ReviewDecks", func(t *testing.T) {
@@ -39,7 +39,7 @@ func TestDeckManager(t *testing.T) {
 
 		question := session.Next()
 		session.Answer("foo")
-		err = db.RangeStats("Hiragana", SM2PlusCustom, func(card string, s *Stats) bool {
+		err = db.RangeStats("Hiragana", SRSSupermemo2PlusCustom, func(card string, s *Stats) bool {
 			if card != question {
 				return true
 			}

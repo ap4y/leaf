@@ -19,14 +19,14 @@ type DeckStats struct {
 
 // DeckManager manages set of decks.
 type DeckManager struct {
-	db     StatsStore
-	smAlgo SupermemoAlgorithm
-	decks  []*Deck
+	db    StatsStore
+	srs   SRS
+	decks []*Deck
 }
 
 // NewDeckManager constructs a new DeckManager by reading all decks
 // from a given folder using provided store and provided supermemo algorithm.
-func NewDeckManager(path string, db StatsStore, smAlgo SupermemoAlgorithm) (*DeckManager, error) {
+func NewDeckManager(path string, db StatsStore, srs SRS) (*DeckManager, error) {
 	files, err := filepath.Glob(path + "/*.org")
 	if err != nil {
 		return nil, err
@@ -41,7 +41,7 @@ func NewDeckManager(path string, db StatsStore, smAlgo SupermemoAlgorithm) (*Dec
 		decks = append(decks, deck)
 	}
 
-	return &DeckManager{db, smAlgo, decks}, nil
+	return &DeckManager{db, srs, decks}, nil
 }
 
 // ReviewDecks returns stats for available decks.
@@ -102,7 +102,7 @@ func (dm *DeckManager) DeckStats(deckName string) ([]*CardWithStats, error) {
 
 func (dm *DeckManager) deckStats(deck *Deck) ([]*CardWithStats, error) {
 	stats := make(map[string]*Stats)
-	err := dm.db.RangeStats(deck.Name, dm.smAlgo, func(card string, s *Stats) bool {
+	err := dm.db.RangeStats(deck.Name, dm.srs, func(card string, s *Stats) bool {
 		stats[card] = s
 		return true
 	})
@@ -115,7 +115,7 @@ func (dm *DeckManager) deckStats(deck *Deck) ([]*CardWithStats, error) {
 		if stats[card.Question] != nil {
 			result = append(result, &CardWithStats{card, stats[card.Question]})
 		} else {
-			result = append(result, &CardWithStats{card, NewStats(dm.smAlgo)})
+			result = append(result, &CardWithStats{card, NewStats(dm.srs)})
 		}
 	}
 

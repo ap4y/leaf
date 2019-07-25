@@ -28,7 +28,7 @@ func TestStatsDB(t *testing.T) {
 
 	cards := []string{}
 	stats := []Stats{}
-	err = db.RangeStats("deck1", SM2PlusCustom, func(card string, s *Stats) bool {
+	err = db.RangeStats("deck1", SRSSupermemo2PlusCustom, func(card string, s *Stats) bool {
 		cards = append(cards, card)
 		stats = append(stats, *s)
 		return true
