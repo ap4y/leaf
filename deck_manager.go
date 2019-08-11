@@ -129,7 +129,7 @@ func (dm *DeckManager) reviewDeck(deck *Deck, total int) (nextReviewAt time.Time
 	}
 
 	stats, sErr := dm.deckStats(deck)
-	if err != nil {
+	if sErr != nil {
 		err = sErr
 		return
 	}

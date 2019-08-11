@@ -54,8 +54,6 @@ func (db *boltStore) RangeStats(
 
 			return nil
 		})
-
-		return nil
 	})
 }
 
