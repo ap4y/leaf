@@ -68,6 +68,7 @@ class App {
     this._session.style.display = "none";
     this._stats.style.display = null;
 
+    this.statsList.deck = deck;
     this.statsList.stats = await this._fetchStats(deck);
   }
 

@@ -41,15 +41,16 @@ export default class StatsList {
     return this._el;
   }
 
+  set deck(deck) {
+    this._el.querySelector("#statsDeck").innerHTML = deck;
+  }
+
   set stats(stats) {
     this._stats = stats;
     this._renderItems();
   }
 
   _renderItems() {
-    this.deck = window.history.state.deck;
-    this._el.querySelector("#statsDeck").innerHTML = this.deck;
-
     const stats = this._stats;
     if (stats.length === 0) return;
 
