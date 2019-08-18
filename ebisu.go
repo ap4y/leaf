@@ -227,8 +227,12 @@ func logsumexp(a, b [2]float64) float64 {
 	return math.Log(sum) + aMax
 }
 
-// mathBeta returns natural logarithm of the Beta function.
+// betaln returns natural logarithm of the Beta function.
 func betaln(a, b float64) float64 {
 	// B(x,y) = Γ(x)Γ(y) / Γ(x+y)
-	return math.Log(math.Gamma(a) * math.Gamma(b) / math.Gamma(a+b))
+	// Therefore log(B(x,y)) = log(Γ(x)) + log(Γ(y)) - log(Γ(x+y))
+	la, _ := math.Lgamma(a)
+	lb, _ := math.Lgamma(b)
+	lab, _ := math.Lgamma(a + b)
+	return la + lb - lab
 }
