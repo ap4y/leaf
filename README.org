@@ -1,6 +1,6 @@
 * Leaf
 
-*Leaf* is a flashcard app that uses supermemo [[https://en.wikipedia.org/wiki/Spaced_repetition][spaced repetition]]
+*Leaf* is a flashcard app that uses [[https://en.wikipedia.org/wiki/Spaced_repetition][spaced repetition]]
  algorithm. *Leaf* focuses on simplifying database management, ease of
  access and support for various spaced repetition curves (including
  custom).
@@ -64,7 +64,7 @@ to define new ones. Following algorithms are supported as of now:
 - [[https://fasiha.github.io/ebisu.js/][ebisu]]
 
 You can find calculated intervals in corresponding test files. Check
-[[https://github.com/ap4y/leaf/blob/master/stats.go#L12-L22][Supermemo]] interface to define a new algorithm or curve.
+[[https://github.com/ap4y/leaf/blob/master/stats.go#L12-L22][SRSAlgorithm]] interface to define a new algorithm or curve.
 
 Please keep in mind that algorithm variables may not be compatible
 with each other and algorithm switching is not supported.
