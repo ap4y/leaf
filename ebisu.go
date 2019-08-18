@@ -53,7 +53,7 @@ func (eb *Ebisu) Advance(rating float64) (interval float64) {
 	return eb.Interval
 }
 
-// MarshalJSON implements json.Marshaller for Supermemo2
+// MarshalJSON implements json.Marshaller for Ebisu
 func (eb *Ebisu) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		LastReviewedAt time.Time
@@ -64,7 +64,7 @@ func (eb *Ebisu) MarshalJSON() ([]byte, error) {
 	}{eb.LastReviewedAt, eb.Alpha, eb.Beta, eb.Interval, eb.Historical})
 }
 
-// UnmarshalJSON implements json.Unmarshaller for Supermemo2
+// UnmarshalJSON implements json.Unmarshaller for Ebisu
 func (eb *Ebisu) UnmarshalJSON(b []byte) error {
 	payload := &struct {
 		LastReviewedAt time.Time
