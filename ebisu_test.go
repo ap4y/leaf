@@ -103,6 +103,8 @@ func TestBetaln(t *testing.T) {
 	assert.InDelta(t, -28.23, betaln(13, 35), 0.01)
 	assert.InDelta(t, -84.94, betaln(47.25, 80.5), 0.01)
 	assert.InDelta(t, -59.9, betaln(79.75, 26.25), 0.01)
+	assert.InDelta(t, -137.26, betaln(999, 30.25), 0.01)
+	assert.InDelta(t, -224.85, betaln(99, 300.25), 0.01)
 }
 
 func toHourDuration(hours float64) time.Duration {
