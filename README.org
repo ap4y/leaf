@@ -15,7 +15,13 @@ toolchain to compile the app.
 To install or update run:
 
 #+BEGIN_SRC shell
-go get -u github.com/ap4y/leaf
+go get -u github.com/ap4y/leaf/cmd/leaf
+#+END_SRC
+
+or
+
+#+BEGIN_SRC shell
+go get -u github.com/ap4y/leaf/cmd/leaf-server
 #+END_SRC
 
 Leaf provides 2 different versions:
