@@ -21,6 +21,12 @@ var (
 )
 
 func main() {
+	flag.Usage = func() {
+		fmt.Fprintf(flag.CommandLine.Output(), "Usage: %s [args] [stats|review] [deck_name]\n", os.Args[0])
+		fmt.Fprintf(flag.CommandLine.Output(), "Example: %s -decks ./fixtures review Hiragana\n", os.Args[0])
+		fmt.Fprintln(flag.CommandLine.Output(), "Optional arguments:")
+		flag.PrintDefaults()
+	}
 	flag.Parse()
 
 	deckName := flag.Arg(1)
