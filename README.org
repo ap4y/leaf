@@ -40,6 +40,17 @@ Both utilities have the following configuration options:
 
 For ~leaf-server~ you can also adjust address to start server on via ~-addr :8000~.
 
+Terminal CLI (~leaf~) has following commands:
+
+- ~review~ will initiate review for a deck
+- ~stats~ will return stats snapshots for a deck
+
+Both commands expect deck name after the command name. Full example:
+
+#+BEGIN_SRC shell
+./leaf -decks ./fixtures review Hiragana
+#+END_SRC
+
 ** Database management
 
 *Leaf* uses plain text files structured usin [[https://orgmode.org/manual/Headlines.html#Headlines][org-mode headlines]]. Consider following file:
