@@ -30,7 +30,7 @@ func TestDeck(t *testing.T) {
 
 		cards := deck.Cards
 		assert.Equal(t, "<em>emphasis</em>", cards[0].Question)
-		assert.Equal(t, "/emphasis/", cards[0].Answer())
+		assert.Equal(t, "/emphasis/ side2", cards[0].Answer())
 		assert.Equal(
 			t,
 			"Code sample<div class=\"src src-javascript\">\n<div class=\"highlight\">\n<pre>\nconst foo = &#34;test&#34;\n</pre>\n</div>\n</div>\n",

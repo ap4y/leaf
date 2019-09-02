@@ -117,15 +117,15 @@ func (deck *Deck) load(f *os.File) error {
 
 		org.WriteNodes(w, headline.Title...)
 
-		var answer string
+		var answers string
 		if block, ok := headline.Children[0].(org.Block); ok && block.Name == "SRC" {
 			org.WriteNodes(w, block)
-			answer = strings.TrimSpace(org.String(headline.Children[1:]))
+			answers = strings.TrimSpace(org.String(headline.Children[1:]))
 		} else {
-			answer = strings.TrimSpace(org.String(headline.Children))
+			answers = strings.TrimSpace(org.String(headline.Children))
 		}
 
-		deck.Cards = append(deck.Cards, Card{w.String(), []string{answer}})
+		deck.Cards = append(deck.Cards, Card{w.String(), strings.Split(answers, "\n")})
 	}
 
 	return nil
