@@ -1,3 +1,5 @@
+import StatsGraph from "./stats_graph.js";
+
 const template = `
 <header>
   <h3>Deck: <span id="statsDeck"></span></h3>
@@ -23,10 +25,6 @@ const template = `
       <strong>Difficulty: </strong>
       <span id="difficulty"></span>
     </li>
-    <li>
-      <strong>Historical: </strong>
-      <span id="historical"></span>
-    </li>
   </ul>
 </main>
 `;
@@ -35,6 +33,8 @@ export default class StatsList {
   constructor() {
     this._el = document.createElement("div");
     this._el.innerHTML = template;
+    this._graph = new StatsGraph();
+    this._el.querySelector("main").appendChild(this._graph.element);
   }
 
   get element() {
@@ -81,10 +81,6 @@ export default class StatsList {
     ).toLocaleString();
     this._el.querySelector("#interval").innerHTML = intervalString;
     this._el.querySelector("#difficulty").innerHTML = stats["Difficulty"];
-    this._el.querySelector("#historical").innerHTML = (
-      stats["Historical"] || []
-    )
-      .map(({ interval }) => interval)
-      .join(", ");
+    this._graph.stats = stats["Historical"];
   }
 }

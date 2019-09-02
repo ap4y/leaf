@@ -204,6 +204,65 @@ code {
   font-size: 50%;
 }
 
+.stats-graph {
+  height: 300px;
+}
+
+.stats-graph .axis line {
+  stroke: #d8dee9;
+}
+
+.stats-graph .axis text {
+  font-size: 12px;
+  fill: #d8dee9;
+}
+
+.stats-graph .axis text:first-of-type {
+  text-anchor: start;
+}
+
+.stats-graph .interval path {
+  stroke: #b48ead;
+}
+
+.stats-graph .interval circle {
+  fill: #b48ead;
+}
+
+.stats-graph .interval text {
+  fill: #b48ead;
+}
+
+.stats-graph .factor path {
+  stroke: #a3be8c;
+}
+
+.stats-graph .factor circle {
+  fill: #a3be8c;
+}
+
+.stats-graph .factor text {
+  fill: #a3be8c;
+}
+
+.stats-graph .graph path {
+  fill: none;
+}
+
+.stats-graph .graph circle {
+  stroke: none;
+}
+
+.stats-graph .graph text {
+  font-size: 14px;
+  font-weight: bold;
+  text-anchor: middle;
+}
+
+.stats-graph text:last-of-type {
+  text-anchor: end;
+}
+
 @media screen and (max-width: 500px) {
   .deck-list {
     margin-left: 0;
