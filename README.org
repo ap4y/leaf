@@ -66,6 +66,9 @@ Answer 2
 Such file will be parsed as a deck named _Sample_ and it will have 2
 cards. For a full deck example check [[https://raw.githubusercontent.com/ap4y/leaf/master/fixtures/hiragana.org][hiragana]] deck.
 
+You can use text formatting, images, links and code blocks in deck
+files. Check [[https://raw.githubusercontent.com/ap4y/leaf/master/fixtures/org-mode.org][org-mode]] deck for an overview of supported options.
+
 Spaced repetition variables are stored in a separate file in a binary
 database. You can edit deck files at any time and changes will be
 automatically reflected in the web app.

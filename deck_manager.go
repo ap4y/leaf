@@ -26,7 +26,7 @@ type DeckManager struct {
 
 // NewDeckManager constructs a new DeckManager by reading all decks
 // from a given folder using provided store and provided supermemo algorithm.
-func NewDeckManager(path string, db StatsStore, srs SRS) (*DeckManager, error) {
+func NewDeckManager(path string, db StatsStore, srs SRS, outFormat OutputFormat) (*DeckManager, error) {
 	files, err := filepath.Glob(path + "/*.org")
 	if err != nil {
 		return nil, err
@@ -34,7 +34,7 @@ func NewDeckManager(path string, db StatsStore, srs SRS) (*DeckManager, error) {
 
 	decks := make([]*Deck, 0)
 	for _, file := range files {
-		deck, err := OpenDeck(file)
+		deck, err := OpenDeck(file, outFormat)
 		if err != nil {
 			return nil, err
 		}

@@ -22,7 +22,7 @@ func TestWebUI(t *testing.T) {
 	db, err := leaf.OpenBoltStore(tmpfile.Name())
 	require.NoError(t, err)
 
-	dm, err := leaf.NewDeckManager("../fixtures", db, leaf.SRSSupermemo2PlusCustom)
+	dm, err := leaf.NewDeckManager("../fixtures", db, leaf.SRSSupermemo2PlusCustom, leaf.OutputFormatOrg)
 	require.NoError(t, err)
 
 	srv := NewServer(dm, &leaf.HarshRater{}, 20)
@@ -37,7 +37,7 @@ func TestWebUI(t *testing.T) {
 
 		decks := make([]*leaf.DeckStats, 0)
 		require.NoError(t, json.NewDecoder(w.Body).Decode(&decks))
-		assert.Len(t, decks, 1)
+		assert.Len(t, decks, 2)
 	})
 
 	t.Run("deckStats", func(t *testing.T) {

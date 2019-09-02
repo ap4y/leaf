@@ -3,7 +3,6 @@ package leaf
 import (
 	"io/ioutil"
 	"os"
-	"sort"
 	"testing"
 	"time"
 
@@ -13,17 +12,31 @@ import (
 
 func TestDeck(t *testing.T) {
 	t.Run("OpenDeck", func(t *testing.T) {
-		deck, err := OpenDeck("./fixtures/hiragana.org")
+		deck, err := OpenDeck("./fixtures/hiragana.org", OutputFormatOrg)
 		require.NoError(t, err)
 		assert.Equal(t, "Hiragana", deck.Name)
 		require.Len(t, deck.Cards, 46)
 
 		cards := deck.Cards
-		sort.Slice(cards, func(i, j int) bool {
-			return cards[i].Question > cards[j].Question
-		})
-		assert.Equal(t, "ん", cards[0].Question)
-		assert.Equal(t, "n", cards[0].Answer())
+		assert.Equal(t, "あ", cards[0].Question)
+		assert.Equal(t, "a", cards[0].Answer())
+	})
+
+	t.Run("OpenRichDeck", func(t *testing.T) {
+		deck, err := OpenDeck("./fixtures/org-mode.org", OutputFormatHTML)
+		require.NoError(t, err)
+		assert.Equal(t, "Org-mode", deck.Name)
+		require.Len(t, deck.Cards, 10)
+
+		cards := deck.Cards
+		assert.Equal(t, "<em>emphasis</em>", cards[0].Question)
+		assert.Equal(t, "/emphasis/", cards[0].Answer())
+		assert.Equal(
+			t,
+			"Code sample<div class=\"src src-javascript\">\n<div class=\"highlight\">\n<pre>\nconst foo = &#34;test&#34;\n</pre>\n</div>\n</div>\n",
+			cards[9].Question,
+		)
+		assert.Equal(t, "const foo = \"test\"", cards[9].Answer())
 	})
 
 	t.Run("Reload", func(t *testing.T) {
@@ -35,7 +48,7 @@ func TestDeck(t *testing.T) {
 		require.NoError(t, err)
 		require.NoError(t, deckfile.Sync())
 
-		deck, err := OpenDeck(deckfile.Name())
+		deck, err := OpenDeck(deckfile.Name(), OutputFormatOrg)
 		require.NoError(t, err)
 		require.Len(t, deck.Cards, 1)
 

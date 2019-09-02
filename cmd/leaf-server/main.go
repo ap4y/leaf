@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"log"
+	"net/http"
 
 	"github.com/ap4y/leaf"
 	"github.com/ap4y/leaf/ui"
@@ -27,14 +28,18 @@ func main() {
 
 	defer db.Close()
 
-	dm, err := leaf.NewDeckManager(*decks, db, leaf.SRS(*algo))
+	dm, err := leaf.NewDeckManager(*decks, db, leaf.SRS(*algo), leaf.OutputFormatHTML)
 	if err != nil {
 		log.Fatal("Failed to initialise deck manager: ", err)
 	}
 
 	srv := ui.NewServer(dm, &leaf.HarshRater{}, *count)
+	handler := srv.Handler(*devMode)
+	fs := http.FileServer(http.Dir(*decks))
+	handler.Handle("/images/", http.StripPrefix("/images", fs))
 
-	if err := srv.Serve(*addr, *devMode); err != nil {
+	log.Println("Serving HTTP on", *addr)
+	if err := http.ListenAndServe(*addr, handler); err != nil {
 		log.Fatal("Failed to render: ", err)
 	}
 }

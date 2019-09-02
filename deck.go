@@ -1,11 +1,22 @@
 package leaf
 
 import (
-	"bufio"
 	"fmt"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/niklasfasching/go-org/org"
+)
+
+// OutputFormat defines output type produces during org file parsing.
+type OutputFormat int
+
+const (
+	// OutputFormatOrg defines pretty printed org output.
+	OutputFormatOrg OutputFormat = iota
+	// OutputFormatHTML defines html output.
+	OutputFormatHTML
 )
 
 // Card represents a single card in a Deck. Each card may have
@@ -25,6 +36,7 @@ type Deck struct {
 	Name  string
 	Cards []Card
 
+	format   OutputFormat
 	modtime  time.Time
 	filename string
 }
@@ -34,7 +46,7 @@ type Deck struct {
 // ** Question
 // side 1
 // side 2
-func OpenDeck(filename string) (*Deck, error) {
+func OpenDeck(filename string, format OutputFormat) (*Deck, error) {
 	f, err := os.Open(filename)
 	if err != nil {
 		return nil, fmt.Errorf("file: %s", err)
@@ -45,7 +57,7 @@ func OpenDeck(filename string) (*Deck, error) {
 		return nil, fmt.Errorf("file: %s", err)
 	}
 
-	deck := &Deck{modtime: stat.ModTime(), filename: filename}
+	deck := &Deck{modtime: stat.ModTime(), filename: filename, format: format}
 	if err := deck.load(f); err != nil {
 		return nil, err
 	}
@@ -78,28 +90,42 @@ func (deck *Deck) Reload() error {
 }
 
 func (deck *Deck) load(f *os.File) error {
-	cards := make(map[string][]string)
-	scanner := bufio.NewScanner(f)
-	var question string
-	for scanner.Scan() {
-		text := scanner.Text()
-		if strings.HasPrefix(text, "* ") {
-			deck.Name = strings.Replace(text, "* ", "", -1)
-		} else if strings.HasPrefix(text, "** ") {
-			question = strings.Replace(text, "** ", "", -1)
-			cards[question] = make([]string, 0)
-		} else {
-			cards[question] = append(cards[question], text)
-		}
+	doc := org.New().Parse(f, "./")
+	if len(doc.Nodes) == 0 {
+		return fmt.Errorf("empty or invalid org-file")
 	}
 
-	if err := scanner.Err(); err != nil {
-		return fmt.Errorf("scanner: %s", err)
+	root, ok := doc.Nodes[0].(org.Headline)
+	if !ok {
+		return fmt.Errorf("org-file doesn't start with a headline")
 	}
-
+	deck.Name = org.String(root.Title)
 	deck.Cards = make([]Card, 0)
-	for question, sides := range cards {
-		deck.Cards = append(deck.Cards, Card{question, sides})
+
+	for _, node := range root.Children {
+		headline, ok := node.(org.Headline)
+		if !ok || len(headline.Children) == 0 {
+			continue
+		}
+
+		var w org.Writer
+		if deck.format == OutputFormatHTML {
+			w = org.NewHTMLWriter()
+		} else {
+			w = org.NewOrgWriter()
+		}
+
+		org.WriteNodes(w, headline.Title...)
+
+		var answer string
+		if block, ok := headline.Children[0].(org.Block); ok && block.Name == "SRC" {
+			org.WriteNodes(w, block)
+			answer = strings.TrimSpace(org.String(headline.Children[1:]))
+		} else {
+			answer = strings.TrimSpace(org.String(headline.Children))
+		}
+
+		deck.Cards = append(deck.Cards, Card{w.String(), []string{answer}})
 	}
 
 	return nil

@@ -1,0 +1,24 @@
+* Org-mode
+** /emphasis/
+/emphasis/
+** _underlined_
+_underlined_
+** *bold*
+*bold*
+** =verbatim=
+=verbatim=
+** ~code~
+~code~
+** +strikethrough+
++strikethrough+
+** [[https://example.com][example.com]]
+[[https://example.com][example.com]]
+** [[https://placekitten.com/200/200#.png]]
+[[https://placekitten.com/200/200#.png]]
+** [[/images/200.png]]
+[[/images/200.png]]
+** Code sample
+#+BEGIN_SRC javascript
+const foo = "test"
+#+END_SRC
+const foo = "test"

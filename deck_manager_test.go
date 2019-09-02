@@ -18,13 +18,13 @@ func TestDeckManager(t *testing.T) {
 	db, err := OpenBoltStore(tmpfile.Name())
 	require.NoError(t, err)
 
-	dm, err := NewDeckManager("./fixtures", db, SRSSupermemo2PlusCustom)
+	dm, err := NewDeckManager("./fixtures", db, SRSSupermemo2PlusCustom, OutputFormatOrg)
 	require.NoError(t, err)
 
 	t.Run("ReviewDecks", func(t *testing.T) {
 		decks, err := dm.ReviewDecks()
 		require.NoError(t, err)
-		require.Len(t, decks, 1)
+		require.Len(t, decks, 2)
 
 		deck := decks[0]
 		assert.Equal(t, "Hiragana", deck.Name)

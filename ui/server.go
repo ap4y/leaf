@@ -4,7 +4,6 @@ package ui
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"strings"
 
@@ -30,8 +29,8 @@ func NewServer(dm *leaf.DeckManager, rater leaf.Rater, cardsPerReview int) *Serv
 	return &Server{dm: dm, rater: rater, cardsPerReview: cardsPerReview}
 }
 
-// Serve starts listening loop on addr.
-func (srv *Server) Serve(addr string, devMode bool) error {
+// Handler returns a new handler for a Server.
+func (srv *Server) Handler(devMode bool) *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.Handle("/", http.FileServer(FS(devMode)))
 	mux.HandleFunc("/decks", srv.listDecks)
@@ -39,9 +38,7 @@ func (srv *Server) Serve(addr string, devMode bool) error {
 	mux.HandleFunc("/stats/", srv.deckStats)
 	mux.HandleFunc("/next", srv.nextCard)
 	mux.HandleFunc("/resolve", srv.resolveCard)
-
-	log.Println("Serving HTTP on", addr)
-	return http.ListenAndServe(addr, mux)
+	return mux
 }
 
 func (srv *Server) listDecks(w http.ResponseWriter, req *http.Request) {
