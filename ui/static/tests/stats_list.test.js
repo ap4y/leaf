@@ -1,4 +1,4 @@
-import StatsList from "./stats_list.js";
+import StatsList from "../stats_list.js";
 
 test("render", () => {
   const statsList = new StatsList();

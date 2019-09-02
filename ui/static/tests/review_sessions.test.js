@@ -1,4 +1,4 @@
-import ReviewSession from "./review_session.js";
+import ReviewSession from "../review_session.js";
 
 test("render", () => {
   const reviewSession = new ReviewSession();

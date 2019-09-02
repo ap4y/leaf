@@ -1,4 +1,4 @@
-//go:generate esc -o ui/static.go -prefix ui/static -pkg ui ui/static
+//go:generate esc -o ui/static.go -prefix ui/static -pkg ui -ignore tests ui/static
 
 package ui
 

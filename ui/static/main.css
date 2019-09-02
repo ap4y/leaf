@@ -32,6 +32,10 @@ h1 {
   font-size: 3.247em;
 }
 
+.src {
+  font-size: 50%;
+}
+
 h2 {
   font-size: 1.602em;
 }
@@ -194,6 +198,10 @@ code {
 
 #question {
   font-weight: normal;
+}
+
+.src {
+  font-size: 50%;
 }
 
 @media screen and (max-width: 500px) {

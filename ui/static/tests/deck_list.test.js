@@ -1,4 +1,4 @@
-import DeckList from "./deck_list.js";
+import DeckList from "../deck_list.js";
 
 test("render", () => {
   const deckList = new DeckList();
