@@ -14,7 +14,7 @@ func TestReviewSession(t *testing.T) {
 	}
 
 	stats := make(map[string]*Stats)
-	s := NewReviewSession(cards, HarshRater{}, func(card *CardWithStats) error {
+	s := NewReviewSession(cards, func(card *CardWithStats) error {
 		stats[card.Question] = card.Stats
 		return nil
 	})
@@ -39,33 +39,27 @@ func TestReviewSession(t *testing.T) {
 		assert.Equal(t, "bar", s.CorrectAnswer())
 	})
 
-	t.Run("Answer - incorrect", func(t *testing.T) {
-		correct, err := s.Answer("123")
-		require.NoError(t, err)
-		assert.False(t, correct)
+	t.Run("Rate - incorrect", func(t *testing.T) {
+		require.NoError(t, s.Again())
 		assert.Equal(t, 2, s.Left())
 		assert.Equal(t, "bar", s.Next())
 	})
 
-	t.Run("Answer - correct", func(t *testing.T) {
-		correct, err := s.Answer("baz")
-		require.NoError(t, err)
-		assert.True(t, correct)
+	t.Run("Rate - correct", func(t *testing.T) {
+		require.NoError(t, s.Rate(1))
 		assert.Equal(t, 1, s.Left())
 		assert.Equal(t, "foo", s.Next())
 	})
 
-	t.Run("Answer - multiple incorrect", func(t *testing.T) {
+	t.Run("Rate - multiple incorrect", func(t *testing.T) {
 		for i := 0; i < 4; i++ {
-			s.Answer("123")
+			require.NoError(t, s.Again())
 		}
 		assert.Equal(t, 1, s.Left())
 	})
 
 	t.Run("Answer - finish session", func(t *testing.T) {
-		correct, err := s.Answer("bar")
-		require.NoError(t, err)
-		assert.True(t, correct)
+		require.NoError(t, s.Rate(0))
 		assert.Equal(t, 0, s.Left())
 	})
 

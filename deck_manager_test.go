@@ -33,12 +33,12 @@ func TestDeckManager(t *testing.T) {
 	})
 
 	t.Run("ReviewSession", func(t *testing.T) {
-		session, err := dm.ReviewSession("Hiragana", HarshRater{}, 20)
+		session, err := dm.ReviewSession("Hiragana", 20)
 		require.NoError(t, err)
 		assert.Equal(t, 20, session.Total())
 
 		question := session.Next()
-		session.Answer("foo")
+		session.Again()
 		err = db.RangeStats("Hiragana", SRSSupermemo2PlusCustom, func(card string, s *Stats) bool {
 			if card != question {
 				return true

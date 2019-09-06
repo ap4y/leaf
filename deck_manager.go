@@ -60,7 +60,7 @@ func (dm *DeckManager) ReviewDecks() ([]*DeckStats, error) {
 }
 
 // ReviewSession initiates a new ReviewSession for a given deck name.
-func (dm *DeckManager) ReviewSession(deckName string, rater Rater, total int) (*ReviewSession, error) {
+func (dm *DeckManager) ReviewSession(deckName string, total int) (*ReviewSession, error) {
 	var deck *Deck
 	for _, d := range dm.decks {
 		if d.Name == deckName {
@@ -78,7 +78,7 @@ func (dm *DeckManager) ReviewSession(deckName string, rater Rater, total int) (*
 		return nil, err
 	}
 
-	return NewReviewSession(cards, rater, func(card *CardWithStats) error {
+	return NewReviewSession(cards, func(card *CardWithStats) error {
 		return dm.db.SaveStats(deckName, card.Question, card.Stats)
 	}), nil
 }

@@ -10,26 +10,22 @@ type StatsSaveFunc func(card *CardWithStats) error
 
 // ReviewSession contains parameters for a Deck review sessions.
 type ReviewSession struct {
-	rater      Rater
 	statsSaver StatsSaveFunc
 	cards      []*CardWithStats
 	queue      []string
-	mistakes   map[string]int
 	startedAt  time.Time
 }
 
 // NewReviewSession constructs a new ReviewSession for a given set of cards.
 // Rating calculation will be performed using provided rater.
 // Provided StatsSaveFunc will be used for stats updates post review.
-func NewReviewSession(cards []*CardWithStats, rater Rater, statsSaver StatsSaveFunc) *ReviewSession {
+func NewReviewSession(cards []*CardWithStats, statsSaver StatsSaveFunc) *ReviewSession {
 	queue := []string{}
-	mistakes := make(map[string]int)
 	for _, card := range cards {
 		queue = append(queue, card.Question)
-		mistakes[card.Question] = 0
 	}
 
-	return &ReviewSession{rater, statsSaver, cards, queue, mistakes, time.Now()}
+	return &ReviewSession{statsSaver, cards, queue, time.Now()}
 }
 
 // StartedAt returns start time of the review session.
@@ -67,28 +63,28 @@ func (s *ReviewSession) CorrectAnswer() string {
 	return card.Answer()
 }
 
-// Answer matches provided answer against correct and advances session.
-func (s *ReviewSession) Answer(answer string) (bool, error) {
-	question := s.Next()
+// Again re-queues current card back for review.
+func (s *ReviewSession) Again() error {
 	card := s.currentCard()
 	if card == nil {
-		return false, errors.New("unknown card")
+		return errors.New("no cards in queue")
 	}
 
 	s.queue = s.queue[1:]
-	if answer == card.Answer() {
-		rating := s.rater.Rate(s.mistakes[question])
-		card.Advance(rating)
-		if err := s.statsSaver(card); err != nil {
-			return false, err
-		}
+	s.queue = append(s.queue, card.Question)
+	return nil
+}
 
-		return true, nil
+// Rate assign rating to a current card and removes it from the queue if rating > 0.
+func (s *ReviewSession) Rate(rating float64) error {
+	card := s.currentCard()
+	if card == nil {
+		return errors.New("no cards in queue")
 	}
 
-	s.mistakes[question]++
-	s.queue = append(s.queue, question)
-	return false, nil
+	s.queue = s.queue[1:]
+	card.Advance(rating)
+	return s.statsSaver(card)
 }
 
 func (s *ReviewSession) currentCard() *CardWithStats {
