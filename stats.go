@@ -2,11 +2,8 @@ package leaf
 
 import (
 	"encoding/json"
-	"math"
 	"time"
 )
-
-const ratingSuccess = 0.6
 
 // SRSAlgorithm calculates review intervals
 type SRSAlgorithm interface {
@@ -19,25 +16,6 @@ type SRSAlgorithm interface {
 	NextReviewAt() time.Time
 	// Less defines card order for the review.
 	Less(other SRSAlgorithm) bool
-}
-
-// Rater rates review attempt based on amount of mistakes. Rating
-// should be within [0, 1] range.
-type Rater interface {
-	Rate(mistakes int) float64
-}
-
-// HarshRater implements offset based rating. Rating declines really
-// fast and even 1 mistakes results in 0.59 rating.
-type HarshRater struct{}
-
-// Rate implements Rater for a HarshRater.
-func (hr HarshRater) Rate(mistakes int) float64 {
-	if mistakes == 0 {
-		return 1
-	}
-
-	return math.Max(0, 0.79-float64(mistakes)/5)
 }
 
 // Stats store SM2+ parameters for a Card.
