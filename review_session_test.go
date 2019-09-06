@@ -14,8 +14,8 @@ func TestReviewSession(t *testing.T) {
 	}
 
 	stats := make(map[string]*Stats)
-	s := NewReviewSession(cards, HarshRater{}, func(question string, s *Stats) error {
-		stats[question] = s
+	s := NewReviewSession(cards, HarshRater{}, func(card *CardWithStats) error {
+		stats[card.Question] = card.Stats
 		return nil
 	})
 

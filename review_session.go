@@ -6,7 +6,7 @@ import (
 )
 
 // StatsSaveFunc persists stats updates.
-type StatsSaveFunc func(question string, stats *Stats) error
+type StatsSaveFunc func(card *CardWithStats) error
 
 // ReviewSession contains parameters for a Deck review sessions.
 type ReviewSession struct {
@@ -79,7 +79,7 @@ func (s *ReviewSession) Answer(answer string) (bool, error) {
 	if answer == card.Answer() {
 		rating := s.rater.Rate(s.mistakes[question])
 		card.Advance(rating)
-		if err := s.statsSaver(question, card.Stats); err != nil {
+		if err := s.statsSaver(card); err != nil {
 			return false, err
 		}
 
