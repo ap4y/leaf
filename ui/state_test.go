@@ -5,7 +5,6 @@ import (
 
 	"github.com/ap4y/leaf"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func TestSessionState(t *testing.T) {
@@ -15,12 +14,12 @@ func TestSessionState(t *testing.T) {
 	}
 
 	stats := make(map[string]*leaf.Stats)
-	s := leaf.NewReviewSession(cards, &leaf.HarshRater{}, func(question string, s *leaf.Stats) error {
-		stats[question] = s
+	s := leaf.NewReviewSession(cards, func(card *leaf.CardWithStats) error {
+		stats[card.Question] = card.Stats
 		return nil
 	})
 
-	state := NewSessionState(s)
+	state := NewSessionState(s, RatingTypeAuto)
 	t.Run("state", func(t *testing.T) {
 		assert.Equal(t, 2, state.Total)
 		assert.Equal(t, 2, state.Left)
@@ -28,22 +27,21 @@ func TestSessionState(t *testing.T) {
 		assert.Equal(t, 3, state.AnswerLen)
 	})
 
-	t.Run("ResolveAnswer - incorrect", func(t *testing.T) {
-		res, answer := state.ResolveAnswer("123")
-		require.False(t, res)
+	t.Run("ResolveAnswer", func(t *testing.T) {
+		answer := state.ResolveAnswer()
 		assert.Equal(t, "bar", answer)
 		assert.Equal(t, 2, state.Left)
 	})
 
-	t.Run("ResolveAnswer - incorrect", func(t *testing.T) {
-		state.Advance()
+	t.Run("Advance - incorrect", func(t *testing.T) {
+		state.Advance(leaf.ReviewScoreAgain)
 		assert.Equal(t, "bar", state.Question)
 		assert.Equal(t, 3, state.AnswerLen)
+		assert.Equal(t, 2, state.Left)
 	})
 
-	t.Run("ResolveAnswer - correct", func(t *testing.T) {
-		res, _ := state.ResolveAnswer("baz")
-		require.True(t, res)
+	t.Run("Advance - correct", func(t *testing.T) {
+		state.Advance(leaf.ReviewScoreGood)
 		assert.Equal(t, 1, state.Left)
 	})
 }

@@ -17,16 +17,16 @@ type statsResponse struct {
 
 // Server implements web ui for reviews.
 type Server struct {
-	dm    *leaf.DeckManager
-	rater leaf.Rater
+	dm *leaf.DeckManager
+	rt RatingType
 
 	cardsPerReview int
 	sessionState   *SessionState
 }
 
 // NewServer construct a new Server instance.
-func NewServer(dm *leaf.DeckManager, rater leaf.Rater, cardsPerReview int) *Server {
-	return &Server{dm: dm, rater: rater, cardsPerReview: cardsPerReview}
+func NewServer(dm *leaf.DeckManager, rt RatingType, cardsPerReview int) *Server {
+	return &Server{dm: dm, rt: rt, cardsPerReview: cardsPerReview}
 }
 
 // Handler returns a new handler for a Server.
@@ -36,8 +36,8 @@ func (srv *Server) Handler(devMode bool) *http.ServeMux {
 	mux.HandleFunc("/decks", srv.listDecks)
 	mux.HandleFunc("/start/", srv.startSession)
 	mux.HandleFunc("/stats/", srv.deckStats)
-	mux.HandleFunc("/next", srv.nextCard)
-	mux.HandleFunc("/resolve", srv.resolveCard)
+	mux.HandleFunc("/advance", srv.advanceSession)
+	mux.HandleFunc("/resolve", srv.resolveAnswer)
 	return mux
 }
 
@@ -65,13 +65,13 @@ func (srv *Server) startSession(w http.ResponseWriter, req *http.Request) {
 	}
 
 	deckName := strings.Replace(req.URL.Path, "/start/", "", -1)
-	session, err := srv.dm.ReviewSession(deckName, srv.rater, srv.cardsPerReview)
+	session, err := srv.dm.ReviewSession(deckName, srv.cardsPerReview)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 		return
 	}
 
-	srv.sessionState = NewSessionState(session)
+	srv.sessionState = NewSessionState(session, srv.rt)
 	if err := json.NewEncoder(w).Encode(srv.sessionState); err != nil {
 		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 	}
@@ -102,24 +102,7 @@ func (srv *Server) deckStats(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func (srv *Server) nextCard(w http.ResponseWriter, req *http.Request) {
-	if req.Method != http.MethodGet {
-		http.Error(w, "invalid method", http.StatusMethodNotAllowed)
-		return
-	}
-
-	if srv.sessionState == nil {
-		http.Error(w, "no active sessions", http.StatusBadRequest)
-		return
-	}
-
-	srv.sessionState.Advance()
-	if err := json.NewEncoder(w).Encode(srv.sessionState); err != nil {
-		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
-	}
-}
-
-func (srv *Server) resolveCard(w http.ResponseWriter, req *http.Request) {
+func (srv *Server) advanceSession(w http.ResponseWriter, req *http.Request) {
 	if req.Method != http.MethodPost {
 		http.Error(w, "invalid method", http.StatusMethodNotAllowed)
 		return
@@ -130,14 +113,32 @@ func (srv *Server) resolveCard(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	data := map[string]string{}
+	data := map[string]leaf.ReviewScore{}
 	if err := json.NewDecoder(req.Body).Decode(&data); err != nil {
 		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 		return
 	}
 
-	result, correct := srv.sessionState.ResolveAnswer(data["answer"])
-	res := map[string]interface{}{"is_correct": result, "correct": correct}
+	srv.sessionState.Advance(data["score"])
+
+	if err := json.NewEncoder(w).Encode(srv.sessionState); err != nil {
+		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
+	}
+}
+
+func (srv *Server) resolveAnswer(w http.ResponseWriter, req *http.Request) {
+	if req.Method != http.MethodGet {
+		http.Error(w, "invalid method", http.StatusMethodNotAllowed)
+		return
+	}
+
+	if srv.sessionState == nil {
+		http.Error(w, "no active sessions", http.StatusBadRequest)
+		return
+	}
+
+	answer := srv.sessionState.ResolveAnswer()
+	res := map[string]string{"answer": answer}
 	if err := json.NewEncoder(w).Encode(res); err != nil {
 		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 	}

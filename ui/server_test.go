@@ -25,7 +25,7 @@ func TestWebUI(t *testing.T) {
 	dm, err := leaf.NewDeckManager("../fixtures", db, leaf.SRSSupermemo2PlusCustom, leaf.OutputFormatOrg)
 	require.NoError(t, err)
 
-	srv := NewServer(dm, &leaf.HarshRater{}, 20)
+	srv := NewServer(dm, RatingTypeAuto, 20)
 
 	t.Run("listDecks", func(t *testing.T) {
 		req := httptest.NewRequest("GET", "http://example.com/decks", nil)
@@ -67,11 +67,11 @@ func TestWebUI(t *testing.T) {
 		assert.Equal(t, 20, state.Left)
 	})
 
-	t.Run("nextCard", func(t *testing.T) {
-		req := httptest.NewRequest("GET", "http://example.com/next", nil)
+	t.Run("advanceSession", func(t *testing.T) {
+		req := httptest.NewRequest("POST", "http://example.com/advance", strings.NewReader("{\"score\":0}"))
 		w := httptest.NewRecorder()
 
-		srv.nextCard(w, req)
+		srv.advanceSession(w, req)
 		res := w.Result()
 		assert.Equal(t, http.StatusOK, res.StatusCode)
 
@@ -81,16 +81,16 @@ func TestWebUI(t *testing.T) {
 		assert.Equal(t, 20, state.Left)
 	})
 
-	t.Run("resolveCard", func(t *testing.T) {
-		req := httptest.NewRequest("POST", "http://example.com/resolve", strings.NewReader("{\"answer\":\"foo\"}"))
+	t.Run("resolveAnswer", func(t *testing.T) {
+		req := httptest.NewRequest("GET", "http://example.com/resolve", nil)
 		w := httptest.NewRecorder()
 
-		srv.resolveCard(w, req)
+		srv.resolveAnswer(w, req)
 		res := w.Result()
 		assert.Equal(t, http.StatusOK, res.StatusCode)
 
-		result := make(map[string]interface{})
+		result := make(map[string]string)
 		require.NoError(t, json.NewDecoder(w.Body).Decode(&result))
-		assert.Equal(t, false, result["is_correct"])
+		assert.Equal(t, "i", result["answer"])
 	})
 }
