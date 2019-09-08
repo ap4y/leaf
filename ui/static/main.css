@@ -106,6 +106,17 @@ a:visited {
   color: inherit;
 }
 
+button,
+input[type="submit"] {
+  -webkit-appearance: none;
+  height: 35px;
+  padding: 0 0.5rem;
+
+  background: #eceff4;
+  border: none;
+  border-radius: 3px;
+}
+
 .container {
   padding: 1.25em;
   background: white;
@@ -128,6 +139,11 @@ a:visited {
   display: flex;
 }
 
+.session .rating-form {
+  flex-direction: column;
+  align-items: center;
+}
+
 .session #input {
   height: 35px;
   margin: 0 0.5em 0 0;
@@ -137,14 +153,8 @@ a:visited {
   font-size: 1em;
 }
 
-.session input[type="submit"] {
-  -webkit-appearance: none;
-  height: 35px;
+.session submit-button {
   width: 35px;
-
-  background: #eceff4;
-  border: none;
-  border-radius: 3px;
 }
 
 .session p {

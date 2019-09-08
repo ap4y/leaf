@@ -2,20 +2,20 @@ import StatsGraph from "./stats_graph.js";
 
 const template = `
 <header>
-  <h3>Deck: <span id="statsDeck"></span></h3>
+  <h3>Deck: <span id="stats-deck"></span></h3>
   <div class="stats-select-row">
     <h4>Cards: </h4>
-    <select id="statsList"></select>
+    <select id="stats-list"></select>
   </div>
 </header>
 
 <main class="container">
-  <h3>Current Stats for <span id="statsCard"></span></h3>
+  <h3>Current Stats for <span id="stats-card"></span></h3>
 
   <ul>
     <li>
       <strong>Last Reviewed At: </strong>
-      <span id="reviewedAt"></span>
+      <span id="reviewed-at"></span>
     </li>
     <li>
       <strong>Interval: </strong>
@@ -42,7 +42,7 @@ export default class StatsList {
   }
 
   set deck(deck) {
-    this._el.querySelector("#statsDeck").innerHTML = deck;
+    this._el.querySelector("#stats-deck").innerHTML = deck;
   }
 
   set stats(stats) {
@@ -57,14 +57,14 @@ export default class StatsList {
     this._populateSelect(stats);
     this._renderStats(stats[0]);
 
-    this._el.querySelector("#statsList").onchange = ({ target }) => {
+    this._el.querySelector("#stats-list").onchange = ({ target }) => {
       const stat = stats.find(({ card }) => card === target.value);
       this._renderStats(stat);
     };
   }
 
   _populateSelect(stats) {
-    this._el.querySelector("#statsList").innerHTML = stats
+    this._el.querySelector("#stats-list").innerHTML = stats
       .map(({ card }) => `<option>${card}</option>`)
       .join("");
   }
@@ -75,8 +75,8 @@ export default class StatsList {
       (interval >= 24 ? `${Math.floor(interval / 24)}d ` : "") +
       `${interval % 24}h`;
 
-    this._el.querySelector("#statsCard").innerHTML = card;
-    this._el.querySelector("#reviewedAt").innerHTML = new Date(
+    this._el.querySelector("#stats-card").innerHTML = card;
+    this._el.querySelector("#reviewed-at").innerHTML = new Date(
       stats["LastReviewedAt"]
     ).toLocaleString();
     this._el.querySelector("#interval").innerHTML = intervalString;

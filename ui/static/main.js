@@ -13,9 +13,9 @@ class App {
     this._stats.appendChild(this.statsList.element);
 
     this.reviewSession = new ReviewSession();
-    this.reviewSession.submitAnswer = answer => this._submitAnswer(answer);
-    this.reviewSession.getNextQuestion = async () => {
-      const session = await this._fetchNext();
+    this.reviewSession.resolveAnswer = () => this._resolveAnswer();
+    this.reviewSession.advanceSession = async score => {
+      const session = await this._advanceSession(score);
       this.reviewSession.session = session;
     };
     this._session = document.getElementById("session");
@@ -94,15 +94,15 @@ class App {
     });
   }
 
-  _submitAnswer(answer) {
-    return this._request("resolve", {
-      method: "POST",
-      body: JSON.stringify({ answer })
-    });
+  _resolveAnswer() {
+    return this._request("resolve");
   }
 
-  _fetchNext() {
-    return this._request("next");
+  _advanceSession(score) {
+    return this._request("advance", {
+      method: "POST",
+      body: JSON.stringify({ score })
+    });
   }
 }
 
