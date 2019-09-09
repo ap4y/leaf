@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/ap4y/leaf"
 	runewidth "github.com/mattn/go-runewidth"
 	termbox "github.com/nsf/termbox-go"
 )
@@ -59,7 +60,29 @@ func (ui *TUI) Render(s *SessionState) error {
 			}
 
 			if ui.step == stepScore {
-				s.Advance()
+				var score leaf.ReviewScore
+				if s.RatingType == RatingTypeSelf {
+					switch ev.Ch {
+					case '1':
+						score = leaf.ReviewScoreAgain
+					case '2':
+						score = leaf.ReviewScoreHard
+					case '3':
+						score = leaf.ReviewScoreGood
+					case '4':
+						score = leaf.ReviewScoreEasy
+					default:
+						continue
+					}
+				} else {
+					if ui.prevResult {
+						score = leaf.ReviewScoreEasy
+					} else {
+						score = leaf.ReviewScoreAgain
+					}
+				}
+
+				s.Advance(score)
 				if s.session.Left() == 0 {
 					ui.step = stepFinished
 				} else {
@@ -70,7 +93,8 @@ func (ui *TUI) Render(s *SessionState) error {
 			}
 
 			if ev.Key == termbox.KeyEnter {
-				ui.prevResult, ui.prevCorrect = s.ResolveAnswer(string(ui.userInput))
+				ui.prevCorrect = s.ResolveAnswer()
+				ui.prevResult = ui.prevCorrect == string(ui.userInput)
 				ui.step = stepScore
 				ui.userInput = make([]rune, 0)
 			} else if ev.Key == termbox.KeyBackspace || ev.Key == termbox.KeyBackspace2 {
@@ -110,6 +134,15 @@ func (ui *TUI) draw(s *SessionState) {
 	}
 
 	write(s.Question, w/2, h/2-4, alignCenter, termbox.ColorYellow|termbox.AttrBold, 0)
+	if s.RatingType == RatingTypeSelf {
+		ui.drawSelfRater(s)
+	} else {
+		ui.drawAutoRater(s)
+	}
+}
+
+func (ui *TUI) drawAutoRater(s *SessionState) {
+	w, h := termbox.Size()
 	write("(type answer below)", w/2, h/2-3, alignCenter, 0, 0)
 
 	x := (w / 2) - (s.AnswerLen / 2)
@@ -129,6 +162,28 @@ func (ui *TUI) draw(s *SessionState) {
 		} else {
 			write("✕", w/2, (h/2)+2, alignCenter, termbox.ColorRed|termbox.AttrBold, 0)
 			write(ui.prevCorrect, w/2, (h/2)+3, alignCenter, termbox.ColorWhite, 0)
+		}
+	}
+}
+
+func (ui *TUI) drawSelfRater(s *SessionState) {
+	w, h := termbox.Size()
+	write("(select option below)", w/2, h/2-3, alignCenter, 0, 0)
+
+	x := (w / 2) - (s.AnswerLen / 2)
+
+	switch ui.step {
+	case stepAnswering:
+		write(" Show Answer: Enter ", x-9, h/2, 0, termbox.ColorMagenta, termbox.ColorWhite)
+	case stepScore:
+		write(ui.prevCorrect, w/2, h/2, alignCenter, termbox.ColorGreen, 0)
+		scores := []string{" Again: 1 ", " Hard: 2 ", " Good: 3 ", " Easy: 4 "}
+		for idx, score := range scores {
+			scoreX := (w / 2) - 16
+			for _, prev := range scores[0:idx] {
+				scoreX += len(prev) + 1
+			}
+			write(score, scoreX, h/2+2, alignCenter, termbox.ColorMagenta, termbox.ColorWhite)
 		}
 	}
 }

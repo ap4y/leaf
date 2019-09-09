@@ -18,6 +18,7 @@ var (
 	db    = flag.String("db", "leaf.db", "stats database location")
 	count = flag.Int("count", 20, "cards to review")
 	algo  = flag.String("algo", "sm2+c", "spaced repetition algoritm to use")
+	rater = flag.String("rater", "auto", "review rater to use: auto or self rated")
 )
 
 func main() {
@@ -64,7 +65,7 @@ func main() {
 		}
 		w.Flush()
 	case "review":
-		session, err := dm.ReviewSession(deckName, leaf.HarshRater{}, *count)
+		session, err := dm.ReviewSession(deckName, *count)
 		if err != nil {
 			log.Fatal("Failed to create review session: ", err)
 		}
@@ -76,7 +77,7 @@ func main() {
 
 		u := ui.NewTUI(deckName)
 
-		if err := u.Render(ui.NewSessionState(session)); err != nil {
+		if err := u.Render(ui.NewSessionState(session, ui.RatingType(*rater))); err != nil {
 			log.Fatal("Failed to render: ", err)
 		}
 	default:
