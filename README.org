@@ -36,7 +36,8 @@ Both utilities have following configuration options:
 - ~-db leaf.db~ is a location of a stats DB that contains spaced
   repetition variables for your decks.
 - ~-count 20~ is a maximum amount of cards per review.
-- ~-algo sm2+c~ is a spaced repetition algorithm to use. All possible values can be found [[https://github.com/ap4y/leaf/blob/master/stats.go#L57-L64][here]].
+- ~-algo sm2+c~ is a spaced repetition algorithm to use. All possible values can be found [[https://github.com/ap4y/leaf/blob/master/stats.go#L35-L44][here]].
+- ~rater auto~ defines which rater will be used for reviews. Supported values: ~auto~ and ~self~.
 
 For ~leaf-server~ you can also adjust address to start server on via ~-addr :8000~.
 
@@ -84,19 +85,27 @@ to define new ones. Following algorithms are supported as of now:
 - [[https://fasiha.github.io/ebisu.js/][ebisu]]
 
 You can find calculated intervals in corresponding test files. Check
-[[https://github.com/ap4y/leaf/blob/master/stats.go#L12-L22][SRSAlgorithm]] interface to define a new algorithm or curve.
+[[https://github.com/ap4y/leaf/blob/master/stats.go#L9-19][SRSAlgorithm]] interface to define a new algorithm or curve.
 
 Please keep in mind that algorithm variables may not be compatible
 with each other and algorithm switching is not supported.
 
 ** Review rating
 
-All reviews are rated using ~[0..1]~ scale based on amount of misakes
-made during review. Score higher than ~0.6~ will mark review as
-successful. Rating is assigned using [[https://github.com/ap4y/leaf/blob/master/stats.go#L30-L41][HarshRater]] which implements steep
-curve and a single mistake will have score less than ~0.6~. Check
-[[https://github.com/ap4y/leaf/blob/master/stats.go#L24-L28][Rater]] interface to get understanding how to define a different rater
-curve.
+All reviews are rated using ~[0..1]~ scale. Rating higher than ~0.6~
+will mark review as successful. You can use 2 different types of
+rating systems:
+
+- ~auto~ is based on amount of mistakes made during review. For ~auto~
+  rating is assigned using [[https://github.com/ap4y/leaf/blob/master/rating.go#L35-L37][HarshRater]] which implements steep curve and
+  a single mistake will have score less than ~0.6~. Check [[https://github.com/ap4y/leaf/blob/master/rating.go#L24-L26][Rater]]
+  interface to get understanding how to define a different rater
+  curve.
+
+- ~self~ is a self assessment system. You have to assign score for
+  each review and score will be converted to a rating as such: ~hard =
+  0.2~, ~good = 0.6~, ~easy = 1.0~, ~again~ will push card back into
+  the review queue.
 
 
 
