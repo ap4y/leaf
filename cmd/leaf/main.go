@@ -18,7 +18,6 @@ var (
 	db    = flag.String("db", "leaf.db", "stats database location")
 	count = flag.Int("count", 20, "cards to review")
 	algo  = flag.String("algo", "sm2+c", "spaced repetition algoritm to use")
-	rater = flag.String("rater", "auto", "review rater to use: auto or self rated")
 )
 
 func main() {
@@ -77,7 +76,7 @@ func main() {
 
 		u := ui.NewTUI(deckName)
 
-		if err := u.Render(ui.NewSessionState(session, ui.RatingType(*rater))); err != nil {
+		if err := u.Render(ui.NewSessionState(session)); err != nil {
 			log.Fatal("Failed to render: ", err)
 		}
 	default:

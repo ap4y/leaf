@@ -33,8 +33,9 @@ func (c *Card) Answer() string {
 
 // Deck represents a named collection of the cards to review.
 type Deck struct {
-	Name  string
-	Cards []Card
+	Name       string
+	Cards      []Card
+	RatingType RatingType
 
 	format   OutputFormat
 	modtime  time.Time
@@ -101,6 +102,12 @@ func (deck *Deck) load(f *os.File) error {
 	}
 	deck.Name = org.String(root.Title)
 	deck.Cards = make([]Card, 0)
+	deck.RatingType = RatingTypeAuto
+	if root.Properties != nil {
+		if rater, success := root.Properties.Get("RATER"); success {
+			deck.RatingType = RatingType(rater)
+		}
+	}
 
 	for _, node := range root.Children {
 		headline, ok := node.(org.Headline)

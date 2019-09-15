@@ -37,7 +37,6 @@ Both utilities have following configuration options:
   repetition variables for your decks.
 - ~-count 20~ is a maximum amount of cards per review.
 - ~-algo sm2+c~ is a spaced repetition algorithm to use. All possible values can be found [[https://github.com/ap4y/leaf/blob/master/stats.go#L35-L44][here]].
-- ~rater auto~ defines which rater will be used for reviews. Supported values: ~auto~ and ~self~.
 
 For ~leaf-server~ you can also adjust address to start server on via ~-addr :8000~.
 
@@ -96,7 +95,7 @@ All reviews are rated using ~[0..1]~ scale. Rating higher than ~0.6~
 will mark review as successful. You can use 2 different types of
 rating systems:
 
-- ~auto~ is based on amount of mistakes made during review. For ~auto~
+- ~auto~ (default) is based on amount of mistakes made during review. For ~auto~
   rating is assigned using [[https://github.com/ap4y/leaf/blob/master/rating.go#L35-L37][HarshRater]] which implements steep curve and
   a single mistake will have score less than ~0.6~. Check [[https://github.com/ap4y/leaf/blob/master/rating.go#L24-L26][Rater]]
   interface to get understanding how to define a different rater
@@ -107,5 +106,14 @@ rating systems:
   0.2~, ~good = 0.6~, ~easy = 1.0~, ~again~ will push card back into
   the review queue.
 
+To change rating system for a deck define org-mode property ~RATER~
+in your deck file, for example:
 
-
+#+BEGIN_SRC org
+* Sample
+:PROPERTIES:
+:RATER: self
+:END:
+** Question 1
+Answer 1
+#+END_SRC

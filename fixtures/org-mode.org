@@ -1,4 +1,7 @@
 * Org-mode
+:PROPERTIES:
+:RATER: self
+:END:
 ** /emphasis/
 /emphasis/
 side2

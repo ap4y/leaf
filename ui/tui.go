@@ -61,7 +61,7 @@ func (ui *TUI) Render(s *SessionState) error {
 
 			if ui.step == stepScore {
 				var score leaf.ReviewScore
-				if s.RatingType == RatingTypeSelf {
+				if s.RatingType == leaf.RatingTypeSelf {
 					switch ev.Ch {
 					case '1':
 						score = leaf.ReviewScoreAgain
@@ -134,7 +134,7 @@ func (ui *TUI) draw(s *SessionState) {
 	}
 
 	write(s.Question, w/2, h/2-4, alignCenter, termbox.ColorYellow|termbox.AttrBold, 0)
-	if s.RatingType == RatingTypeSelf {
+	if s.RatingType == leaf.RatingTypeSelf {
 		ui.drawSelfRater(s)
 	} else {
 		ui.drawAutoRater(s)

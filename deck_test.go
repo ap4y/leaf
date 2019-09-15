@@ -15,6 +15,7 @@ func TestDeck(t *testing.T) {
 		deck, err := OpenDeck("./fixtures/hiragana.org", OutputFormatOrg)
 		require.NoError(t, err)
 		assert.Equal(t, "Hiragana", deck.Name)
+		assert.Equal(t, RatingTypeAuto, deck.RatingType)
 		require.Len(t, deck.Cards, 46)
 
 		cards := deck.Cards
@@ -26,6 +27,7 @@ func TestDeck(t *testing.T) {
 		deck, err := OpenDeck("./fixtures/org-mode.org", OutputFormatHTML)
 		require.NoError(t, err)
 		assert.Equal(t, "Org-mode", deck.Name)
+		assert.Equal(t, RatingTypeSelf, deck.RatingType)
 		require.Len(t, deck.Cards, 10)
 
 		cards := deck.Cards

@@ -4,6 +4,16 @@ import "math"
 
 const ratingSuccess = 0.6
 
+// RatingType defines types of review rating options.
+type RatingType string
+
+const (
+	// RatingTypeAuto defines auto rated review option.
+	RatingTypeAuto RatingType = "auto"
+	// RatingTypeSelf defines self rated review option.
+	RatingTypeSelf RatingType = "self"
+)
+
 // ReviewScore defines grade for review attempts. Rater uses scores to
 // calculate rating in range from [0, 1].
 type ReviewScore int
@@ -53,7 +63,7 @@ func (rater harshRater) Rate(question string, score ReviewScore) float64 {
 type tableRater struct {
 }
 
-// ManualRater returns Rater implementation with following the conversion table:
+// TableRater returns Rater implementation with following the conversion table:
 // again => 0
 // hard => 0.2
 // good => 0.6

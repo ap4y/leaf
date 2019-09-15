@@ -18,15 +18,14 @@ type statsResponse struct {
 // Server implements web ui for reviews.
 type Server struct {
 	dm *leaf.DeckManager
-	rt RatingType
 
 	cardsPerReview int
 	sessionState   *SessionState
 }
 
 // NewServer construct a new Server instance.
-func NewServer(dm *leaf.DeckManager, rt RatingType, cardsPerReview int) *Server {
-	return &Server{dm: dm, rt: rt, cardsPerReview: cardsPerReview}
+func NewServer(dm *leaf.DeckManager, cardsPerReview int) *Server {
+	return &Server{dm: dm, cardsPerReview: cardsPerReview}
 }
 
 // Handler returns a new handler for a Server.
@@ -71,7 +70,7 @@ func (srv *Server) startSession(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	srv.sessionState = NewSessionState(session, srv.rt)
+	srv.sessionState = NewSessionState(session)
 	if err := json.NewEncoder(w).Encode(srv.sessionState); err != nil {
 		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 	}

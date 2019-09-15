@@ -14,13 +14,17 @@ func TestReviewSession(t *testing.T) {
 	}
 
 	stats := make(map[string]*Stats)
-	s := NewReviewSession(cards, func(card *CardWithStats) error {
+	s := NewReviewSession(cards, RatingTypeAuto, func(card *CardWithStats) error {
 		stats[card.Question] = card.Stats
 		return nil
 	})
 
 	t.Run("StartedAt", func(t *testing.T) {
 		assert.NotNil(t, s.StartedAt())
+	})
+
+	t.Run("RatingType", func(t *testing.T) {
+		assert.Equal(t, RatingTypeAuto, s.RatingType())
 	})
 
 	t.Run("Total", func(t *testing.T) {

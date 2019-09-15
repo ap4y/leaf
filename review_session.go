@@ -14,23 +14,29 @@ type ReviewSession struct {
 	cards      []*CardWithStats
 	queue      []string
 	startedAt  time.Time
+	ratingType RatingType
 }
 
 // NewReviewSession constructs a new ReviewSession for a given set of cards.
 // Rating calculation will be performed using provided rater.
 // Provided StatsSaveFunc will be used for stats updates post review.
-func NewReviewSession(cards []*CardWithStats, statsSaver StatsSaveFunc) *ReviewSession {
+func NewReviewSession(cards []*CardWithStats, rt RatingType, statsSaver StatsSaveFunc) *ReviewSession {
 	queue := []string{}
 	for _, card := range cards {
 		queue = append(queue, card.Question)
 	}
 
-	return &ReviewSession{statsSaver, cards, queue, time.Now()}
+	return &ReviewSession{statsSaver, cards, queue, time.Now(), rt}
 }
 
 // StartedAt returns start time of the review session.
 func (s *ReviewSession) StartedAt() time.Time {
 	return s.startedAt
+}
+
+// RatingType returns type of rating to be used for the review session.
+func (s *ReviewSession) RatingType() RatingType {
+	return s.ratingType
 }
 
 // Total returns amount of cards in the session.

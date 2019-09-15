@@ -25,7 +25,7 @@ func TestWebUI(t *testing.T) {
 	dm, err := leaf.NewDeckManager("../fixtures", db, leaf.SRSSupermemo2PlusCustom, leaf.OutputFormatOrg)
 	require.NoError(t, err)
 
-	srv := NewServer(dm, RatingTypeAuto, 20)
+	srv := NewServer(dm, 20)
 
 	t.Run("listDecks", func(t *testing.T) {
 		req := httptest.NewRequest("GET", "http://example.com/decks", nil)

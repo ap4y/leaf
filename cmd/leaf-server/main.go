@@ -15,7 +15,6 @@ var (
 	count   = flag.Int("count", 20, "cards to review")
 	addr    = flag.String("addr", ":8000", "addr for Web UI")
 	algo    = flag.String("algo", "sm2+c", "spaced repetition algoritm to use")
-	rater   = flag.String("rater", "auto", "review rater to use: auto or self rated")
 	devMode = flag.Bool("dev", false, "use local dev assets")
 )
 
@@ -34,7 +33,7 @@ func main() {
 		log.Fatal("Failed to initialise deck manager: ", err)
 	}
 
-	srv := ui.NewServer(dm, ui.RatingType(*rater), *count)
+	srv := ui.NewServer(dm, *count)
 	handler := srv.Handler(*devMode)
 	fs := http.FileServer(http.Dir(*decks))
 	handler.Handle("/images/", http.StripPrefix("/images", fs))

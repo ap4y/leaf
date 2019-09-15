@@ -4,32 +4,22 @@ import (
 	"github.com/ap4y/leaf"
 )
 
-// RatingType defines types of review rating options.
-type RatingType string
-
-const (
-	// RatingTypeAuto defines auto rated review option.
-	RatingTypeAuto RatingType = "auto"
-	// RatingTypeSelf defines self rated review option.
-	RatingTypeSelf RatingType = "self"
-)
-
 // SessionState state holds public state of the ReviewSession.
 type SessionState struct {
-	Total      int        `json:"total"`
-	Left       int        `json:"left"`
-	Question   string     `json:"question"`
-	AnswerLen  int        `json:"answer_length"`
-	RatingType RatingType `json:"rating_type"`
+	Total      int             `json:"total"`
+	Left       int             `json:"left"`
+	Question   string          `json:"question"`
+	AnswerLen  int             `json:"answer_length"`
+	RatingType leaf.RatingType `json:"rating_type"`
 
 	session *leaf.ReviewSession
 	rater   leaf.Rater
 }
 
 // NewSessionState constructs a new SessionState.
-func NewSessionState(session *leaf.ReviewSession, rt RatingType) *SessionState {
+func NewSessionState(session *leaf.ReviewSession) *SessionState {
 	var rater leaf.Rater
-	if rt == RatingTypeSelf {
+	if session.RatingType() == leaf.RatingTypeSelf {
 		rater = leaf.TableRater()
 	} else {
 		rater = leaf.HarshRater()
@@ -40,7 +30,7 @@ func NewSessionState(session *leaf.ReviewSession, rt RatingType) *SessionState {
 		Left:       session.Left(),
 		Question:   session.Next(),
 		AnswerLen:  len(session.CorrectAnswer()),
-		RatingType: rt,
+		RatingType: session.RatingType(),
 		session:    session,
 		rater:      rater,
 	}

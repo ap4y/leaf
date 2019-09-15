@@ -14,12 +14,12 @@ func TestSessionState(t *testing.T) {
 	}
 
 	stats := make(map[string]*leaf.Stats)
-	s := leaf.NewReviewSession(cards, func(card *leaf.CardWithStats) error {
+	s := leaf.NewReviewSession(cards, leaf.RatingTypeAuto, func(card *leaf.CardWithStats) error {
 		stats[card.Question] = card.Stats
 		return nil
 	})
 
-	state := NewSessionState(s, RatingTypeAuto)
+	state := NewSessionState(s)
 	t.Run("state", func(t *testing.T) {
 		assert.Equal(t, 2, state.Total)
 		assert.Equal(t, 2, state.Left)
