@@ -20,13 +20,12 @@ type DeckStats struct {
 // DeckManager manages set of decks.
 type DeckManager struct {
 	db    StatsStore
-	srs   SRS
 	decks []*Deck
 }
 
 // NewDeckManager constructs a new DeckManager by reading all decks
-// from a given folder using provided store and provided supermemo algorithm.
-func NewDeckManager(path string, db StatsStore, srs SRS, outFormat OutputFormat) (*DeckManager, error) {
+// from a given folder using provided store.
+func NewDeckManager(path string, db StatsStore, outFormat OutputFormat) (*DeckManager, error) {
 	files, err := filepath.Glob(path + "/*.org")
 	if err != nil {
 		return nil, err
@@ -41,7 +40,7 @@ func NewDeckManager(path string, db StatsStore, srs SRS, outFormat OutputFormat)
 		decks = append(decks, deck)
 	}
 
-	return &DeckManager{db, srs, decks}, nil
+	return &DeckManager{db, decks}, nil
 }
 
 // ReviewDecks returns stats for available decks.
@@ -60,7 +59,7 @@ func (dm *DeckManager) ReviewDecks() ([]*DeckStats, error) {
 }
 
 // ReviewSession initiates a new ReviewSession for a given deck name.
-func (dm *DeckManager) ReviewSession(deckName string, total int) (*ReviewSession, error) {
+func (dm *DeckManager) ReviewSession(deckName string) (*ReviewSession, error) {
 	var deck *Deck
 	for _, d := range dm.decks {
 		if d.Name == deckName {
@@ -73,7 +72,7 @@ func (dm *DeckManager) ReviewSession(deckName string, total int) (*ReviewSession
 		return nil, ErrNotFound
 	}
 
-	_, cards, err := dm.reviewDeck(deck, total)
+	_, cards, err := dm.reviewDeck(deck, deck.PerReview)
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +101,7 @@ func (dm *DeckManager) DeckStats(deckName string) ([]*CardWithStats, error) {
 
 func (dm *DeckManager) deckStats(deck *Deck) ([]*CardWithStats, error) {
 	stats := make(map[string]*Stats)
-	err := dm.db.RangeStats(deck.Name, dm.srs, func(card string, s *Stats) bool {
+	err := dm.db.RangeStats(deck.Name, deck.Algorithm, func(card string, s *Stats) bool {
 		stats[card] = s
 		return true
 	})
@@ -115,7 +114,7 @@ func (dm *DeckManager) deckStats(deck *Deck) ([]*CardWithStats, error) {
 		if stats[card.Question] != nil {
 			result = append(result, &CardWithStats{card, stats[card.Question]})
 		} else {
-			result = append(result, &CardWithStats{card, NewStats(dm.srs)})
+			result = append(result, &CardWithStats{card, NewStats(deck.Algorithm)})
 		}
 	}
 

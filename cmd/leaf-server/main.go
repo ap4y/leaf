@@ -12,9 +12,7 @@ import (
 var (
 	decks   = flag.String("decks", ".", "deck files location")
 	db      = flag.String("db", "leaf.db", "stats database location")
-	count   = flag.Int("count", 20, "cards to review")
 	addr    = flag.String("addr", ":8000", "addr for Web UI")
-	algo    = flag.String("algo", "sm2+c", "spaced repetition algoritm to use")
 	devMode = flag.Bool("dev", false, "use local dev assets")
 )
 
@@ -28,12 +26,12 @@ func main() {
 
 	defer db.Close()
 
-	dm, err := leaf.NewDeckManager(*decks, db, leaf.SRS(*algo), leaf.OutputFormatHTML)
+	dm, err := leaf.NewDeckManager(*decks, db, leaf.OutputFormatHTML)
 	if err != nil {
 		log.Fatal("Failed to initialise deck manager: ", err)
 	}
 
-	srv := ui.NewServer(dm, *count)
+	srv := ui.NewServer(dm)
 	handler := srv.Handler(*devMode)
 	fs := http.FileServer(http.Dir(*decks))
 	handler.Handle("/images/", http.StripPrefix("/images", fs))

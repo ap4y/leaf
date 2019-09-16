@@ -3,6 +3,7 @@ package leaf
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -35,7 +36,9 @@ func (c *Card) Answer() string {
 type Deck struct {
 	Name       string
 	Cards      []Card
+	Algorithm  SRS
 	RatingType RatingType
+	PerReview  int
 
 	format   OutputFormat
 	modtime  time.Time
@@ -102,10 +105,20 @@ func (deck *Deck) load(f *os.File) error {
 	}
 	deck.Name = org.String(root.Title)
 	deck.Cards = make([]Card, 0)
+	deck.Algorithm = SRSSupermemo2PlusCustom
 	deck.RatingType = RatingTypeAuto
+	deck.PerReview = 20
 	if root.Properties != nil {
 		if rater, success := root.Properties.Get("RATER"); success {
 			deck.RatingType = RatingType(rater)
+		}
+		if algo, success := root.Properties.Get("ALGORITHM"); success {
+			deck.Algorithm = SRS(algo)
+		}
+		if count, success := root.Properties.Get("PER_REVIEW"); success {
+			if c, err := strconv.Atoi(count); err == nil {
+				deck.PerReview = c
+			}
 		}
 	}
 

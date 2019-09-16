@@ -16,6 +16,8 @@ func TestDeck(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, "Hiragana", deck.Name)
 		assert.Equal(t, RatingTypeAuto, deck.RatingType)
+		assert.Equal(t, SRSSupermemo2PlusCustom, string(deck.Algorithm))
+		assert.Equal(t, 20, deck.PerReview)
 		require.Len(t, deck.Cards, 46)
 
 		cards := deck.Cards
@@ -28,6 +30,8 @@ func TestDeck(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, "Org-mode", deck.Name)
 		assert.Equal(t, RatingTypeSelf, deck.RatingType)
+		assert.Equal(t, SRSEbisu, string(deck.Algorithm))
+		assert.Equal(t, 40, deck.PerReview)
 		require.Len(t, deck.Cards, 10)
 
 		cards := deck.Cards

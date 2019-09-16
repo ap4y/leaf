@@ -16,8 +16,6 @@ import (
 var (
 	decks = flag.String("decks", ".", "deck files location")
 	db    = flag.String("db", "leaf.db", "stats database location")
-	count = flag.Int("count", 20, "cards to review")
-	algo  = flag.String("algo", "sm2+c", "spaced repetition algoritm to use")
 )
 
 func main() {
@@ -41,7 +39,7 @@ func main() {
 
 	defer db.Close()
 
-	dm, err := leaf.NewDeckManager(*decks, db, leaf.SRS(*algo), leaf.OutputFormatOrg)
+	dm, err := leaf.NewDeckManager(*decks, db, leaf.OutputFormatOrg)
 	if err != nil {
 		log.Fatal("Failed to initialise deck manager: ", err)
 	}
@@ -64,7 +62,7 @@ func main() {
 		}
 		w.Flush()
 	case "review":
-		session, err := dm.ReviewSession(deckName, *count)
+		session, err := dm.ReviewSession(deckName)
 		if err != nil {
 			log.Fatal("Failed to create review session: ", err)
 		}

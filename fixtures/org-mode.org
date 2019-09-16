@@ -1,6 +1,8 @@
 * Org-mode
 :PROPERTIES:
-:RATER: self
+:RATER:      self
+:ALGORITHM:  ebisu
+:PER_REVIEW: 40
 :END:
 ** /emphasis/
 /emphasis/

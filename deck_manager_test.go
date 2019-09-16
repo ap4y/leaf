@@ -18,7 +18,7 @@ func TestDeckManager(t *testing.T) {
 	db, err := OpenBoltStore(tmpfile.Name())
 	require.NoError(t, err)
 
-	dm, err := NewDeckManager("./fixtures", db, SRSSupermemo2PlusCustom, OutputFormatOrg)
+	dm, err := NewDeckManager("./fixtures", db, OutputFormatOrg)
 	require.NoError(t, err)
 
 	t.Run("ReviewDecks", func(t *testing.T) {
@@ -33,7 +33,7 @@ func TestDeckManager(t *testing.T) {
 	})
 
 	t.Run("ReviewSession", func(t *testing.T) {
-		session, err := dm.ReviewSession("Hiragana", 20)
+		session, err := dm.ReviewSession("Hiragana")
 		require.NoError(t, err)
 		assert.Equal(t, 20, session.Total())
 

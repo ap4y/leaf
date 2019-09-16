@@ -40,7 +40,7 @@ const (
 	// SRSSupermemo2PlusCustom represents Supermemo2PlusCustom algorithm
 	SRSSupermemo2PlusCustom = "sm2+c"
 	// SRSEbisu represents Ebisu algorithm
-	SRSEbisu = "ebs"
+	SRSEbisu = "ebisu"
 )
 
 // NewStats returns a new Stats initialized with provided algorithm

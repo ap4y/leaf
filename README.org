@@ -57,6 +57,11 @@ Both commands expect deck name after the command name. Full example:
 
 #+BEGIN_SRC org
 * Sample
+:PROPERTIES:
+:RATER:      auto
+:ALGORITHM:  sm2+c
+:PER_REVIEW: 20
+:END:
 ** Question 1
 Answer 1
 ** Question 2
@@ -68,6 +73,15 @@ cards. For a full deck example check [[https://raw.githubusercontent.com/ap4y/le
 
 You can use text formatting, images, links and code blocks in your deck
 files. Check [[https://raw.githubusercontent.com/ap4y/leaf/master/fixtures/org-mode.org][org-mode]] deck for an overview of supported options.
+
+Top header level property drawer is used to adjust review
+parameters. Following parameters are supported:
+
+- ~ALGORITHM~ is a spaced repetition algorithm to use. Default is
+  "sm2+c". All possible values can be found [[https://github.com/ap4y/leaf/blob/master/stats.go#L35-L44][here]].
+- ~RATER~ defines which rating system will be used for
+  reviews. Defaults to ~auto~, supported values: ~auto~ and ~self~.
+- ~PER_REVIEW~ is a maximum amount of cards per review.
 
 Spaced repetition variables are stored in a separate file in a binary
 database. You can edit deck files at any time and changes will be
@@ -106,14 +120,5 @@ rating systems:
   0.2~, ~good = 0.6~, ~easy = 1.0~, ~again~ will push card back into
   the review queue.
 
-To change rating system for a deck define org-mode property ~RATER~
-in your deck file, for example:
-
-#+BEGIN_SRC org
-* Sample
-:PROPERTIES:
-:RATER: self
-:END:
-** Question 1
-Answer 1
-#+END_SRC
+To change rating system for a deck define org-mode property ~RATER~ in
+your deck file.

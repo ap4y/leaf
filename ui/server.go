@@ -19,13 +19,12 @@ type statsResponse struct {
 type Server struct {
 	dm *leaf.DeckManager
 
-	cardsPerReview int
-	sessionState   *SessionState
+	sessionState *SessionState
 }
 
 // NewServer construct a new Server instance.
-func NewServer(dm *leaf.DeckManager, cardsPerReview int) *Server {
-	return &Server{dm: dm, cardsPerReview: cardsPerReview}
+func NewServer(dm *leaf.DeckManager) *Server {
+	return &Server{dm: dm}
 }
 
 // Handler returns a new handler for a Server.
@@ -64,7 +63,7 @@ func (srv *Server) startSession(w http.ResponseWriter, req *http.Request) {
 	}
 
 	deckName := strings.Replace(req.URL.Path, "/start/", "", -1)
-	session, err := srv.dm.ReviewSession(deckName, srv.cardsPerReview)
+	session, err := srv.dm.ReviewSession(deckName)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 		return
