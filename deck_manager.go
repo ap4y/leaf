@@ -31,7 +31,7 @@ func NewDeckManager(path string, db StatsStore, outFormat OutputFormat) (*DeckMa
 		return nil, err
 	}
 
-	decks := make([]*Deck, 0)
+	decks := make([]*Deck, 0, len(files))
 	for _, file := range files {
 		deck, err := OpenDeck(file, outFormat)
 		if err != nil {
@@ -44,22 +44,22 @@ func NewDeckManager(path string, db StatsStore, outFormat OutputFormat) (*DeckMa
 }
 
 // ReviewDecks returns stats for available decks.
-func (dm *DeckManager) ReviewDecks() ([]*DeckStats, error) {
-	result := make([]*DeckStats, 0)
+func (dm DeckManager) ReviewDecks() ([]DeckStats, error) {
+	result := make([]DeckStats, 0, len(dm.decks))
 	for _, deck := range dm.decks {
 		nextReviewAt, reviewDeck, err := dm.reviewDeck(deck, -1)
 		if err != nil {
 			return nil, err
 		}
 
-		result = append(result, &DeckStats{deck.Name, len(reviewDeck), nextReviewAt})
+		result = append(result, DeckStats{deck.Name, len(reviewDeck), nextReviewAt})
 	}
 
 	return result, nil
 }
 
 // ReviewSession initiates a new ReviewSession for a given deck name.
-func (dm *DeckManager) ReviewSession(deckName string) (*ReviewSession, error) {
+func (dm DeckManager) ReviewSession(deckName string) (*ReviewSession, error) {
 	var deck *Deck
 	for _, d := range dm.decks {
 		if d.Name == deckName {
@@ -83,7 +83,7 @@ func (dm *DeckManager) ReviewSession(deckName string) (*ReviewSession, error) {
 }
 
 // DeckStats returns card stats for a given deck name.
-func (dm *DeckManager) DeckStats(deckName string) ([]*CardWithStats, error) {
+func (dm DeckManager) DeckStats(deckName string) ([]CardWithStats, error) {
 	var deck *Deck
 	for _, d := range dm.decks {
 		if d.Name == deckName {
@@ -99,7 +99,7 @@ func (dm *DeckManager) DeckStats(deckName string) ([]*CardWithStats, error) {
 	return dm.deckStats(deck)
 }
 
-func (dm *DeckManager) deckStats(deck *Deck) ([]*CardWithStats, error) {
+func (dm DeckManager) deckStats(deck *Deck) ([]CardWithStats, error) {
 	stats := make(map[string]*Stats)
 	err := dm.db.RangeStats(deck.Name, deck.Algorithm, func(card string, s *Stats) bool {
 		stats[card] = s
@@ -109,19 +109,19 @@ func (dm *DeckManager) deckStats(deck *Deck) ([]*CardWithStats, error) {
 		return nil, err
 	}
 
-	result := make([]*CardWithStats, 0)
+	result := make([]CardWithStats, 0, len(deck.Cards))
 	for _, card := range deck.Cards {
 		if stats[card.Question] != nil {
-			result = append(result, &CardWithStats{card, stats[card.Question]})
+			result = append(result, CardWithStats{card, stats[card.Question]})
 		} else {
-			result = append(result, &CardWithStats{card, NewStats(deck.Algorithm)})
+			result = append(result, CardWithStats{card, NewStats(deck.Algorithm)})
 		}
 	}
 
 	return result, nil
 }
 
-func (dm *DeckManager) reviewDeck(deck *Deck, total int) (nextReviewAt time.Time, cards []*CardWithStats, err error) {
+func (dm DeckManager) reviewDeck(deck *Deck, total int) (nextReviewAt time.Time, cards []CardWithStats, err error) {
 	if fErr := deck.Reload(); fErr != nil {
 		err = fErr
 		return
@@ -141,7 +141,7 @@ func (dm *DeckManager) reviewDeck(deck *Deck, total int) (nextReviewAt time.Time
 		nextReviewAt = stats[0].NextReviewAt()
 	}
 
-	cards = make([]*CardWithStats, 0)
+	cards = make([]CardWithStats, 0, len(stats))
 	for _, s := range stats {
 		if total > 0 && len(cards) == total {
 			break

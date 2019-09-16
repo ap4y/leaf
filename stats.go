@@ -62,6 +62,6 @@ func NewStats(srs SRS) *Stats {
 }
 
 // IsReady signals whether card is read for review.
-func (s *Stats) IsReady() bool {
+func (s Stats) IsReady() bool {
 	return s.NextReviewAt().Before(time.Now())
 }

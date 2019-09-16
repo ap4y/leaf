@@ -88,11 +88,9 @@ func (srv *Server) deckStats(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	res := make([]statsResponse, 0)
-	for _, stat := range stats {
-		res = append(res, statsResponse{
-			stat.Question, stat.Stats,
-		})
+	res := make([]statsResponse, len(stats))
+	for idx, stat := range stats {
+		res[idx] = statsResponse{stat.Question, stat.Stats}
 	}
 
 	if err := json.NewEncoder(w).Encode(res); err != nil {

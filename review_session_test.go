@@ -8,7 +8,7 @@ import (
 )
 
 func TestReviewSession(t *testing.T) {
-	cards := []*CardWithStats{
+	cards := []CardWithStats{
 		{Card{"foo", []string{"bar"}}, NewStats(SRSSupermemo2PlusCustom)},
 		{Card{"bar", []string{"baz"}}, NewStats(SRSSupermemo2PlusCustom)},
 	}

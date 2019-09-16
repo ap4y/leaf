@@ -28,7 +28,7 @@ type Card struct {
 }
 
 // Answer returns combined space separated answer for all sides of the card.
-func (c *Card) Answer() string {
+func (c Card) Answer() string {
 	return strings.Join(c.Sides, " ")
 }
 
@@ -104,7 +104,7 @@ func (deck *Deck) load(f *os.File) error {
 		return fmt.Errorf("org-file doesn't start with a headline")
 	}
 	deck.Name = org.String(root.Title)
-	deck.Cards = make([]Card, 0)
+	deck.Cards = make([]Card, 0, len(root.Children))
 	deck.Algorithm = SRSSupermemo2PlusCustom
 	deck.RatingType = RatingTypeAuto
 	deck.PerReview = 20

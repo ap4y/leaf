@@ -11,7 +11,7 @@ type StatsSaveFunc func(card *CardWithStats) error
 // ReviewSession contains parameters for a Deck review sessions.
 type ReviewSession struct {
 	statsSaver StatsSaveFunc
-	cards      []*CardWithStats
+	cards      []CardWithStats
 	queue      []string
 	startedAt  time.Time
 	ratingType RatingType
@@ -20,10 +20,10 @@ type ReviewSession struct {
 // NewReviewSession constructs a new ReviewSession for a given set of cards.
 // Rating calculation will be performed using provided rater.
 // Provided StatsSaveFunc will be used for stats updates post review.
-func NewReviewSession(cards []*CardWithStats, rt RatingType, statsSaver StatsSaveFunc) *ReviewSession {
-	queue := []string{}
-	for _, card := range cards {
-		queue = append(queue, card.Question)
+func NewReviewSession(cards []CardWithStats, rt RatingType, statsSaver StatsSaveFunc) *ReviewSession {
+	queue := make([]string, len(cards))
+	for idx, card := range cards {
+		queue[idx] = card.Question
 	}
 
 	return &ReviewSession{statsSaver, cards, queue, time.Now(), rt}
@@ -95,13 +95,11 @@ func (s *ReviewSession) Rate(rating float64) error {
 
 func (s *ReviewSession) currentCard() *CardWithStats {
 	question := s.Next()
-	var card *CardWithStats
 	for _, c := range s.cards {
 		if c.Question == question {
-			card = c
-			break
+			return &c
 		}
 	}
 
-	return card
+	return nil
 }
