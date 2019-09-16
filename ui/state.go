@@ -48,9 +48,9 @@ func (s *SessionState) Advance(score leaf.ReviewScore) {
 	rating := s.rater.Rate(s.Question, score)
 
 	if score == leaf.ReviewScoreAgain {
-		s.session.Again()
+		s.session.Again() // nolint: errcheck
 	} else {
-		s.session.Rate(rating)
+		s.session.Rate(rating) // nolint: errcheck
 		s.Left = s.session.Left()
 	}
 

@@ -9,8 +9,8 @@ import (
 
 func TestSessionState(t *testing.T) {
 	cards := []leaf.CardWithStats{
-		{leaf.Card{"foo", []string{"bar"}}, leaf.NewStats(leaf.SRSSupermemo2Plus)},
-		{leaf.Card{"bar", []string{"baz"}}, leaf.NewStats(leaf.SRSSupermemo2Plus)},
+		{Card: leaf.Card{Question: "foo", Sides: []string{"bar"}}, Stats: leaf.NewStats(leaf.SRSSupermemo2Plus)},
+		{Card: leaf.Card{Question: "bar", Sides: []string{"baz"}}, Stats: leaf.NewStats(leaf.SRSSupermemo2Plus)},
 	}
 
 	stats := make(map[string]*leaf.Stats)

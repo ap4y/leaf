@@ -120,7 +120,7 @@ func (ui *TUI) Render(s *SessionState) error {
 }
 
 func (ui *TUI) draw(s *SessionState) {
-	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
+	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault) // nolint: errcheck
 	defer termbox.Flush()
 
 	w, h := termbox.Size()
