@@ -45,3 +45,23 @@ func TestSessionState(t *testing.T) {
 		assert.Equal(t, 1, state.Left)
 	})
 }
+
+func TestSessionStateUnicode(t *testing.T) {
+	cards := []leaf.CardWithStats{
+		{Card: leaf.Card{Question: "hello", Sides: []string{"おはよう"}}, Stats: leaf.NewStats(leaf.SRSSupermemo2Plus)},
+	}
+
+	stats := make(map[string]*leaf.Stats)
+	s := leaf.NewReviewSession(cards, leaf.RatingTypeAuto, func(card *leaf.CardWithStats) error {
+		stats[card.Question] = card.Stats
+		return nil
+	})
+
+	state := NewSessionState(s)
+	t.Run("state", func(t *testing.T) {
+		assert.Equal(t, 1, state.Total)
+		assert.Equal(t, 1, state.Left)
+		assert.Equal(t, "hello", state.Question)
+		assert.Equal(t, 4, state.AnswerLen)
+	})
+}

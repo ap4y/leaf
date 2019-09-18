@@ -29,7 +29,7 @@ func NewSessionState(session *leaf.ReviewSession) *SessionState {
 		Total:      session.Total(),
 		Left:       session.Left(),
 		Question:   session.Next(),
-		AnswerLen:  len(session.CorrectAnswer()),
+		AnswerLen:  len([]rune(session.CorrectAnswer())),
 		RatingType: session.RatingType(),
 		session:    session,
 		rater:      rater,
@@ -55,5 +55,5 @@ func (s *SessionState) Advance(score leaf.ReviewScore) {
 	}
 
 	s.Question = s.session.Next()
-	s.AnswerLen = len(s.session.CorrectAnswer())
+	s.AnswerLen = len([]rune(s.session.CorrectAnswer()))
 }
