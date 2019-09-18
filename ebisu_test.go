@@ -44,11 +44,18 @@ func TestEbisu(t *testing.T) {
 	}
 }
 
+func TestEbisueNextReviewAt(t *testing.T) {
+	srs := NewEbisu()
+	assert.InDelta(t, time.Since(srs.NextReviewAt()), time.Duration(0), float64(time.Minute))
+	interval := srs.Advance(1)
+	assert.InDelta(t, time.Duration(interval)*time.Hour, time.Until(srs.NextReviewAt()), float64(time.Minute))
+}
+
 func TestEbisuRecord(t *testing.T) {
 	results := [][]float64{
-		{1.0, 1.0, 0.41, 0.41, 0.41, 0.41, 0.41, 0.41, 0.41},
-		{1.0, 1.0, 1.0, 3.06, 3.06, 3.06, 3.06, 3.06, 9.39},
-		{1.0, 1.0, 1.0, 3.06, 3.06, 3.06, 3.06, 3.06, 9.39},
+		{1.0, 1.0, 1.0, 0.41, 0.41, 0.41, 0.41, 0.41, 0.41},
+		{1.0, 1.0, 3.06, 3.06, 3.06, 3.06, 3.06, 9.39, 9.39},
+		{1.0, 1.0, 3.06, 3.06, 3.06, 3.06, 3.06, 9.39, 9.39},
 	}
 	for idx, rating := range []float64{0.5, 0.6, 1.0} {
 		t.Run(fmt.Sprintf("%f", rating), func(t *testing.T) {
@@ -69,7 +76,7 @@ func TestEbisuRecord(t *testing.T) {
 	t.Run("sequence", func(t *testing.T) {
 		srs := NewEbisu()
 		intervals := []float64{}
-		for _, rating := range []float64{1, 1, 1, 1, 0.5, 1, 1, 1} {
+		for _, rating := range []float64{1, 1, 1, 0.5, 1, 1, 1} {
 			interval := srs.Advance(rating)
 			intervals = append(intervals, interval/24)
 
@@ -77,7 +84,7 @@ func TestEbisuRecord(t *testing.T) {
 			srs.LastReviewedAt = time.Now().Add(-time.Duration(curInterval))
 		}
 
-		assert.InDeltaSlice(t, []float64{1, 1, 1, 3.06, 1.27, 1.27, 1.27, 3.89}, intervals, 0.01)
+		assert.InDeltaSlice(t, []float64{1, 1, 3.06, 1.27, 1.27, 1.27, 3.89}, intervals, 0.01)
 	})
 }
 

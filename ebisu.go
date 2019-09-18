@@ -23,12 +23,12 @@ type Ebisu struct {
 
 // NewEbisu consturcts a new Ebisu instance.
 func NewEbisu() *Ebisu {
-	return &Ebisu{time.Now(), 3, 3, 24, make([]IntervalSnapshot, 0)}
+	return &Ebisu{time.Now().Add(-24 * time.Hour), 3, 3, 24, make([]IntervalSnapshot, 0)}
 }
 
 // NextReviewAt returns next review timestamp for a card.
 func (eb *Ebisu) NextReviewAt() time.Time {
-	return eb.LastReviewedAt.Add(time.Duration(eb.Interval * float64(time.Hour)))
+	return eb.LastReviewedAt.Add(time.Duration(eb.Interval) * time.Hour)
 }
 
 // Less defines card order for the review.
