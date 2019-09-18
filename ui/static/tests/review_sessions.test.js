@@ -63,6 +63,28 @@ describe("auto rater", () => {
     await new Promise(resolve => window.setTimeout(resolve, 100));
     expect(rating).toEqual(1);
   });
+
+  test("submit correct with unicode separator", async () => {
+    const reviewSession = new ReviewSession();
+    reviewSession.session = session;
+    reviewSession.resolveAnswer = () => ({ answer: "いち に" });
+
+    let rating = null;
+    reviewSession.advanceSession = r => {
+      rating = r;
+    };
+
+    const el = reviewSession.element;
+    el.querySelector("#input").value = "いち　に";
+    el.querySelector("#input-form").onsubmit({ preventDefault: () => {} });
+    await new Promise(resolve => window.setTimeout(resolve, 100));
+    expect(el.querySelector("#answer-state").innerHTML).toEqual("✓");
+    expect(el.querySelector("#correct-answer").innerHTML).toEqual("&nbsp;");
+
+    el.querySelector("#input-form").onsubmit({ preventDefault: () => {} });
+    await new Promise(resolve => window.setTimeout(resolve, 100));
+    expect(rating).toEqual(1);
+  });
 });
 
 describe("self rater", () => {

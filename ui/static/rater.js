@@ -44,7 +44,8 @@ export class AutoRater {
     const answerState = this._el.querySelector("#answer-state");
     const correctAnswer = this._el.querySelector("#correct-answer");
 
-    if (answer === userInput) {
+    const pattern = answer.split(/\s/).join("\\s");
+    if (userInput.match(new RegExp(pattern))) {
       answerState.innerHTML = "✓";
       answerState.style.color = "green";
       correctAnswer.innerHTML = "&nbsp";
