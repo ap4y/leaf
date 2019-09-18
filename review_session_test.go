@@ -9,8 +9,8 @@ import (
 
 func TestReviewSession(t *testing.T) {
 	cards := []CardWithStats{
-		{Card{"foo", []string{"bar"}}, NewStats(SRSSupermemo2PlusCustom)},
-		{Card{"bar", []string{"baz"}}, NewStats(SRSSupermemo2PlusCustom)},
+		{Card{"foo", "foo", []string{"bar"}}, NewStats(SRSSupermemo2PlusCustom)},
+		{Card{"bar", "foo", []string{"baz"}}, NewStats(SRSSupermemo2PlusCustom)},
 	}
 
 	stats := make(map[string]*Stats)

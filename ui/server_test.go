@@ -41,7 +41,7 @@ func TestWebUI(t *testing.T) {
 	})
 
 	t.Run("deckStats", func(t *testing.T) {
-		req := httptest.NewRequest("GET", "http://example.com/stats/Hiragana", nil)
+		req := httptest.NewRequest("GET", "http://example.com/stats/Org-mode", nil)
 		w := httptest.NewRecorder()
 
 		srv.deckStats(w, req)
@@ -50,7 +50,8 @@ func TestWebUI(t *testing.T) {
 
 		stats := make([]map[string]interface{}, 0)
 		require.NoError(t, json.NewDecoder(w.Body).Decode(&stats))
-		assert.Len(t, stats, 46)
+		require.Len(t, stats, 10)
+		assert.Equal(t, "/emphasis/", stats[0]["card"])
 	})
 
 	t.Run("startReview", func(t *testing.T) {

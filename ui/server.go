@@ -90,7 +90,7 @@ func (srv *Server) deckStats(w http.ResponseWriter, req *http.Request) {
 
 	res := make([]statsResponse, len(stats))
 	for idx, stat := range stats {
-		res[idx] = statsResponse{stat.Question, stat.Stats}
+		res[idx] = statsResponse{stat.RawQuestion, stat.Stats}
 	}
 
 	if err := json.NewEncoder(w).Encode(res); err != nil {

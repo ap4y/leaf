@@ -23,8 +23,9 @@ const (
 // Card represents a single card in a Deck. Each card may have
 // multiple sides (answers).
 type Card struct {
-	Question string   `json:"card"`
-	Sides    []string `json:"-"`
+	Question    string   `json:"card"`
+	RawQuestion string   `json:"raw_card"`
+	Sides       []string `json:"-"`
 }
 
 // Answer returns combined space separated answer for all sides of the card.
@@ -145,7 +146,8 @@ func (deck *Deck) load(f *os.File) error {
 			answers = strings.TrimSpace(org.String(headline.Children))
 		}
 
-		deck.Cards = append(deck.Cards, Card{w.String(), strings.Split(answers, "\n")})
+		card := Card{w.String(), org.String(headline.Title), strings.Split(answers, "\n")}
+		deck.Cards = append(deck.Cards, card)
 	}
 
 	return nil
