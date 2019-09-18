@@ -1,5 +1,5 @@
 const autoRated = `
-<form id="input-form">
+<form id="input-form" class="input-form">
   <input id="input" autofocus autocomplete="off"/>
   <input type="submit" class="submit-button" value="⏎" />
 </form>
@@ -34,7 +34,7 @@ export class AutoRater {
     this._el.querySelector("#correct-answer").innerHTML = "&nbsp";
 
     const input = this._el.querySelector("#input");
-    input.style.width = `${answer_length}ch`;
+    input.style.width = `${2 * answer_length}ch`;
     input.value = "";
     input.focus();
   }
@@ -82,6 +82,8 @@ export class SelfRater {
     this._el.innerHTML = selfRated;
 
     document.addEventListener("keydown", e => {
+      if (!this._el.parentNode) return null;
+
       switch (e.code) {
         case "Space":
           return this._onSubmit();

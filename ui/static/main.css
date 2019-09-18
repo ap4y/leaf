@@ -144,17 +144,23 @@ input[type="submit"] {
   align-items: center;
 }
 
-.session #input {
+.input-form {
+  margin-left: 35px;
+}
+
+.input-form .submit-button {
+  height: 35px;
+  width: 35px;
+}
+
+.input-form #input {
   height: 35px;
   margin: 0 0.5em 0 0;
   background: none;
   border: none;
   font-family: monospace;
   font-size: 1em;
-}
-
-.session submit-button {
-  width: 35px;
+  text-align: center;
 }
 
 .session p {

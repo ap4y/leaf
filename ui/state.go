@@ -45,7 +45,7 @@ func (s *SessionState) ResolveAnswer() (correctAnswer string) {
 
 // Advance fetches next question if available or sets session to finished otherwise.
 func (s *SessionState) Advance(score leaf.ReviewScore) {
-	rating := s.rater.Rate(s.Question, score)
+	rating := s.rater.Rate(s.Question, score) // increment misses in auto rater
 
 	if score == leaf.ReviewScoreAgain {
 		s.session.Again() // nolint: errcheck
