@@ -1,3 +1,7 @@
 gotest:
   image: golang:1.13
   script: go test ./...
+
+npmtest:
+  image: node:8.16
+  script: cd ui/static/tests ; npm run test
