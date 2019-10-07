@@ -40,7 +40,7 @@ For ~leaf-server~ you can also adjust address to start server on via ~-addr :800
 
 Terminal CLI (~leaf~) has following commands:
 
-- ~review~ will initiate review for a deck
+- ~review~ will initiate review session for a deck
 - ~stats~ will return stats snapshots for a deck
 
 Both commands expect deck name after the command name. Full example:
@@ -76,10 +76,10 @@ Top header level property drawer is used to adjust review
 parameters. Following parameters are supported:
 
 - ~ALGORITHM~ is a spaced repetition algorithm to use. Default is
-  "sm2+c". All possible values can be found [[https://github.com/ap4y/leaf/blob/master/stats.go#L35-L44][here]].
+  ~sm2+c~. All possible values can be found [[https://github.com/ap4y/leaf/blob/master/stats.go#L35-L44][here]].
 - ~RATER~ defines which rating system will be used for
   reviews. Defaults to ~auto~, supported values: ~auto~ and ~self~.
-- ~PER_REVIEW~ is a maximum amount of cards per review.
+- ~PER_REVIEW~ is a maximum amount of cards per review session.
 
 Spaced repetition variables are stored in a separate file in a binary
 database. You can edit deck files at any time and changes will be
