@@ -118,7 +118,7 @@ export class SelfRater {
     this._onSubmit = callback;
   }
 
-  showQuestion(question) {
+  showQuestion() {
     this._el.querySelector("#self-answer").innerHTML = "&nbsp";
     this._el.querySelector("#rating").style.visibility = "hidden";
     this._el.querySelector("#advance").style.visibility = "visible";

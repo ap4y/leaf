@@ -7,4 +7,6 @@ npmtest:
   before_script:
     - cd ui/static
     - npm install
-  script: npm run test
+  script:
+    - npm test
+    - npx eslint .
