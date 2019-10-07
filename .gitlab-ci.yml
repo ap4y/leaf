@@ -4,4 +4,7 @@ gotest:
 
 npmtest:
   image: node:8.16
-  script: cd ui/static/tests ; npm run test
+  before_script:
+    - cd ui/static/tests
+    - npm install
+  script: npm run test
