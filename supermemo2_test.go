@@ -85,5 +85,7 @@ func TestSM2JsonMarshalling(t *testing.T) {
 
 	newSM := new(Supermemo2)
 	require.NoError(t, json.Unmarshal(res, newSM))
-	assert.Equal(t, sm, newSM)
+	assert.Equal(t, int64(100), newSM.LastReviewedAt.Unix())
+	assert.Equal(t, 1.0, newSM.Interval)
+	assert.Equal(t, 2.5, newSM.Easiness)
 }

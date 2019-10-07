@@ -63,10 +63,10 @@ func TestDeck(t *testing.T) {
 		require.NoError(t, deck.Reload())
 		require.Len(t, deck.Cards, 1)
 
-		time.Sleep(100 * time.Millisecond)
 		_, err = deckfile.Write([]byte("** bar\nbaz\n"))
 		require.NoError(t, err)
 		require.NoError(t, deckfile.Sync())
+		time.Sleep(100 * time.Millisecond)
 
 		require.NoError(t, deck.Reload())
 		require.Len(t, deck.Cards, 2)
