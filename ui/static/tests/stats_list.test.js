@@ -26,7 +26,7 @@ test("render", () => {
   expect(el.querySelector("#stats-list").children.length).toEqual(2);
   expect(el.querySelector("#stats-card").innerHTML).toEqual("foo");
   expect(el.querySelector("#reviewed-at").innerHTML).toEqual(
-    "1/1/1970, 12:00:00 PM"
+    new Date(0).toLocaleString()
   );
   expect(el.querySelector("#interval").innerHTML).toEqual("5h");
   expect(el.querySelector("#difficulty").innerHTML).toEqual("1.3");
