@@ -49,7 +49,6 @@ describe("auto rater", () => {
     reviewSession.session = session;
     reviewSession.resolveAnswer = () => ({ answer: "にほんごのかくせい" });
 
-    let rating = null;
     reviewSession.advanceSession = r => {
       rating = r;
     };
