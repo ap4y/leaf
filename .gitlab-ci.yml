@@ -1,5 +1,10 @@
+stages:
+  - test
+  - release
+
 gotest:
-  image: golang:1.13
+  stage: test
+  image: golang:1.14
   before_script:
     - curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.19.1
   script:
@@ -7,6 +12,7 @@ gotest:
     - golangci-lint run
 
 npmtest:
+  stage: test
   image: node:8.16
   before_script:
     - cd ui/static
@@ -14,3 +20,21 @@ npmtest:
   script:
     - npm test
     - npx eslint .
+
+build:
+  stage: release
+  image: docker:stable
+  variables:
+    BUILD_IMAGE_NAME: "$CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA"
+    LATEST_REF_IMAGE: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:latest
+  services:
+    - docker:stable-dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+  script:
+    - >-
+       docker build
+       --tag "$LATEST_REF_IMAGE"
+       --tag "$BUILD_IMAGE_NAME" .
+    - docker push "$BUILD_IMAGE_NAME"
+    - docker push "$LATEST_REF_IMAGE"
