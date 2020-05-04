@@ -1,0 +1,5 @@
+/ui/static/
+
+.git*
+Dockerfile
+.gitlab-ci.yml
