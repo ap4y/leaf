@@ -49,9 +49,7 @@ describe("auto rater", () => {
     reviewSession.session = session;
     reviewSession.resolveAnswer = () => ({ answer: "にほんごのかくせい" });
 
-    reviewSession.advanceSession = r => {
-      rating = r;
-    };
+    reviewSession.advanceSession = () => {};
 
     const el = reviewSession.element;
     el.querySelector("#input").value = "にほんごこくせいい";
