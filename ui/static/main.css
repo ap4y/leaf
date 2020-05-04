@@ -171,6 +171,12 @@ input[type="submit"] {
 .result {
   text-align: center;
 }
+.result .input-mistake {
+  background: rgba(191, 97, 106, 0.5);
+}
+.result .input-correct {
+  background: rgba(163, 190, 140, 0.5);
+}
 
 .deck-list {
   list-style: none;

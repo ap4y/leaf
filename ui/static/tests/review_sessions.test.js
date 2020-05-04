@@ -35,11 +35,34 @@ describe("auto rater", () => {
     el.querySelector("#input-form").onsubmit({ preventDefault: () => {} });
     await new Promise(resolve => window.setTimeout(resolve, 100));
     expect(el.querySelector("#answer-state").innerHTML).toEqual("✕");
-    expect(el.querySelector("#correct-answer").innerHTML).toEqual("bar");
+    expect(el.querySelector("#correct-answer").innerHTML).toEqual(
+      '<span class="input-correct">bar</span>'
+    );
 
     el.querySelector("#input-form").onsubmit({ preventDefault: () => {} });
     await new Promise(resolve => window.setTimeout(resolve, 100));
     expect(rating).toEqual(0);
+  });
+
+  test("mistake diff", async () => {
+    const reviewSession = new ReviewSession();
+    reviewSession.session = session;
+    reviewSession.resolveAnswer = () => ({ answer: "にほんごのかくせい" });
+
+    let rating = null;
+    reviewSession.advanceSession = r => {
+      rating = r;
+    };
+
+    const el = reviewSession.element;
+    el.querySelector("#input").value = "にほんごこくせいい";
+    el.querySelector("#input-form").onsubmit({ preventDefault: () => {} });
+    await new Promise(resolve => window.setTimeout(resolve, 100));
+    expect(el.querySelector("#correct-answer").innerHTML).toEqual(
+      'にほんご<span class="input-correct">の</span>' +
+        '<span class="input-mistake">こ</span><span class="input-correct">か</span>' +
+        'くせい<span class="input-mistake">い</span>'
+    );
   });
 
   test("submit correct", async () => {

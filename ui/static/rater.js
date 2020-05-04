@@ -53,9 +53,65 @@ export class AutoRater {
     } else {
       answerState.innerHTML = "✕";
       answerState.style.color = "red";
-      correctAnswer.innerHTML = answer;
+      correctAnswer.innerHTML = this._diffMistakes(userInput, answer);
       this.score = 0;
     }
+  }
+
+  _levenshteinMatrix(input, correct) {
+    var matrix = [];
+
+    for (let i = 0; i <= input.length; matrix[i] = [i++]);
+    for (let j = 0; j <= correct.length; matrix[0][j] = j++);
+
+    for (let i = 1; i <= input.length; i++) {
+      for (let j = 1; j <= correct.length; j++) {
+        matrix[i][j] =
+          correct[j - 1] === input[i - 1]
+            ? matrix[i - 1][j - 1]
+            : Math.min(
+                matrix[i - 1][j - 1] + 1,
+                matrix[i][j - 1] + 1,
+                matrix[i - 1][j] + 1
+              );
+      }
+    }
+
+    return matrix;
+  }
+
+  _diffMistakes(input, correct) {
+    if (!input || input.length === 0)
+      return `<span class="input-correct">${correct}</span>`;
+
+    const matrix = this._levenshteinMatrix(input, correct);
+    let i = input.length,
+      j = correct.length,
+      diff = [];
+    while (i > 0 && j > 0) {
+      const sub = matrix[i - 1][j - 1],
+        ins = matrix[i][j - 1],
+        del = matrix[i - 1][j],
+        min = Math.min(sub, ins, del);
+
+      if (min === sub) {
+        if (sub == matrix[i][j]) {
+          diff.push(input[(i -= 1)]);
+          j--;
+        } else {
+          diff.push(
+            `<span class="input-mistake">${
+              input[(i -= 1)]
+            }</span><span class="input-correct">${correct[(j -= 1)]}</span>`
+          );
+        }
+      } else if (min === ins) {
+        diff.push(`<span class="input-correct">${correct[(j -= 1)]}</span>`);
+      } else {
+        diff.push(`<span class="input-mistake">${input[(i -= 1)]}</span>`);
+      }
+    }
+    return diff.reverse().join("");
   }
 }
 
