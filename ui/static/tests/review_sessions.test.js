@@ -62,6 +62,22 @@ describe("auto rater", () => {
     );
   });
 
+  test("mistake diff - too many mistakes", async () => {
+    const reviewSession = new ReviewSession();
+    reviewSession.session = session;
+    reviewSession.resolveAnswer = () => ({ answer: "んごのかくせい" });
+
+    reviewSession.advanceSession = () => {};
+
+    const el = reviewSession.element;
+    el.querySelector("#input").value = "にほんごこくせいい";
+    el.querySelector("#input-form").onsubmit({ preventDefault: () => {} });
+    await new Promise(resolve => window.setTimeout(resolve, 100));
+    expect(el.querySelector("#correct-answer").innerHTML).toEqual(
+      '<span class="input-correct">んごのかくせい</span>'
+    );
+  });
+
   test("submit correct", async () => {
     const reviewSession = new ReviewSession();
     reviewSession.session = session;

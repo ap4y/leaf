@@ -87,7 +87,13 @@ export class AutoRater {
     const matrix = this._levenshteinMatrix(input, correct);
     let i = input.length,
       j = correct.length,
-      diff = [];
+      diff = [],
+      maxEdits = 4;
+
+    const numEdits = matrix[i][j];
+    if (numEdits >= maxEdits)
+      return `<span class="input-correct">${correct}</span>`;
+
     while (i > 0 && j > 0) {
       const sub = matrix[i - 1][j - 1],
         ins = matrix[i][j - 1],
