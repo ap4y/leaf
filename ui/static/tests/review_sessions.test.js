@@ -78,6 +78,27 @@ describe("auto rater", () => {
     );
   });
 
+  test("mistake diff - short answer", async () => {
+    const reviewSession = new ReviewSession();
+    reviewSession.session = session;
+    reviewSession.resolveAnswer = () => ({
+      answer: "わたしのじてんしゃはさんまんえんでした"
+    });
+
+    reviewSession.advanceSession = () => {};
+
+    const el = reviewSession.element;
+    el.querySelector("#input").value = "じてんしゃはさんまんえんでした";
+    el.querySelector("#input-form").onsubmit({ preventDefault: () => {} });
+    await new Promise(resolve => window.setTimeout(resolve, 100));
+    expect(el.querySelector("#correct-answer").innerHTML).toEqual(
+      '<span class="input-correct">わ</span>' +
+        '<span class="input-correct">た</span>' +
+        '<span class="input-correct">し</span>' +
+        '<span class="input-correct">の</span>じてんしゃはさんまんえんでした'
+    );
+  });
+
   test("submit correct", async () => {
     const reviewSession = new ReviewSession();
     reviewSession.session = session;

@@ -91,13 +91,13 @@ export class AutoRater {
       maxEdits = 4;
 
     const numEdits = matrix[i][j];
-    if (numEdits >= maxEdits)
+    if (numEdits > maxEdits)
       return `<span class="input-correct">${correct}</span>`;
 
-    while (i > 0 && j > 0) {
-      const sub = matrix[i - 1][j - 1],
-        ins = matrix[i][j - 1],
-        del = matrix[i - 1][j],
+    while (i > 0 || j > 0) {
+      const sub = i > 0 && j > 0 ? matrix[i - 1][j - 1] : maxEdits,
+        ins = j > 0 ? matrix[i][j - 1] : maxEdits,
+        del = i > 0 ? matrix[i - 1][j] : maxEdits,
         min = Math.min(sub, ins, del);
 
       if (min === sub) {
