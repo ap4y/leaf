@@ -13,7 +13,7 @@ gotest:
 
 npmtest:
   stage: test
-  image: node:8.16
+  image: node:current
   before_script:
     - cd ui/static
     - npm install
