@@ -1,12 +1,14 @@
 const autoRated = `
 <form id="input-form" class="input-form">
-  <input id="input" autofocus autocomplete="off"/>
+  <div class="answer-box">
+    <textarea id="input" autofocus autocomplete="off" rows=3></textarea>
+    <span id="correct-answer">&nbsp</span>
+  </div>
   <input type="submit" class="submit-button" value="⏎" />
 </form>
 
 <p id="result" class="result">
   <span id="answer-state">&nbsp</span>
-  <span id="correct-answer">&nbsp</span>
 </p>
 `;
 
@@ -16,6 +18,12 @@ export class AutoRater {
     this._el = document.createElement("div");
     this._el.innerHTML = autoRated;
     this._el.querySelector("#input-form").onsubmit = e => {
+      e.preventDefault();
+      this._onSubmit(this.score);
+    };
+    this._el.querySelector("#input").onkeydown = e => {
+      if (e.key !== "Enter") return;
+
       e.preventDefault();
       this._onSubmit(this.score);
     };
@@ -29,12 +37,12 @@ export class AutoRater {
     this._onSubmit = callback;
   }
 
-  showQuestion({ answer_length }) {
+  showQuestion() {
     this._el.querySelector("#answer-state").innerHTML = "&nbsp";
     this._el.querySelector("#correct-answer").innerHTML = "&nbsp";
+    this._el.querySelector("#correct-answer").style.zIndex = -1;
 
     const input = this._el.querySelector("#input");
-    input.style.width = `${2 * answer_length}ch`;
     input.value = "";
     input.focus();
   }
@@ -54,6 +62,7 @@ export class AutoRater {
       answerState.innerHTML = "✕";
       answerState.style.color = "red";
       correctAnswer.innerHTML = this._diffMistakes(userInput, answer);
+      correctAnswer.style.zIndex = 1;
       this.score = 0;
     }
   }

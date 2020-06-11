@@ -135,6 +135,10 @@ input[type="submit"] {
   align-items: center;
 }
 
+.session > div {
+  width: 100%;
+}
+
 .session form {
   display: flex;
 }
@@ -145,6 +149,7 @@ input[type="submit"] {
 }
 
 .input-form {
+  width: 100%;
   flex-wrap: wrap;
   justify-content: center;
 }
@@ -154,14 +159,40 @@ input[type="submit"] {
   width: 35px;
 }
 
-.input-form #input {
-  height: 35px;
+.input-form .answer-box {
+  flex: 1;
   margin: 0 0.5em 0 0;
+  position: relative;
+}
+
+.answer-box textarea {
+  width: 100%;
   background: none;
   border: none;
+  outline: none;
+  resize: none;
   font-family: monospace;
   font-size: 1em;
-  text-align: center;
+  line-height: 1.45;
+  color: inherit;
+}
+.answer-box > span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+
+  font-family: monospace;
+  font-size: 1em;
+  background: white;
+}
+.answer-box .input-mistake {
+  background: rgba(191, 97, 106, 0.5);
+}
+.answer-box .input-correct {
+  background: rgba(163, 190, 140, 0.5);
 }
 
 .session p {
@@ -170,12 +201,6 @@ input[type="submit"] {
 
 .result {
   text-align: center;
-}
-.result .input-mistake {
-  background: rgba(191, 97, 106, 0.5);
-}
-.result .input-correct {
-  background: rgba(163, 190, 140, 0.5);
 }
 
 .deck-list {
