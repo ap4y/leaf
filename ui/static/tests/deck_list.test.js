@@ -13,7 +13,7 @@ test("render", () => {
   expect(el.children.length).toEqual(2);
 
   const child = el.children[0];
-  expect(child.querySelector("a").text).toEqual("bar");
+  expect(child.querySelector("a").text).toEqual("foo");
   expect(child.querySelector("code").innerHTML).toEqual("10");
 });
 
