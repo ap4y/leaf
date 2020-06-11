@@ -38,3 +38,5 @@ build:
        --tag "$BUILD_IMAGE_NAME" .
     - docker push "$BUILD_IMAGE_NAME"
     - docker push "$LATEST_REF_IMAGE"
+  only:
+    - master
