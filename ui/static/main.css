@@ -163,6 +163,14 @@ input[type="submit"] {
   flex: 1;
   margin: 0 0.5em 0 0;
   position: relative;
+  border: 1px solid #d8dee9;
+  border-radius: 5px;
+  padding: 0.8em;
+}
+.input-form .input-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .answer-box textarea {
@@ -187,6 +195,8 @@ input[type="submit"] {
   font-family: monospace;
   font-size: 1em;
   background: white;
+  border-radius: 5px;
+  padding: 0.8em;
 }
 .answer-box .input-mistake {
   background: rgba(191, 97, 106, 0.5);

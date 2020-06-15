@@ -1,15 +1,14 @@
 const autoRated = `
 <form id="input-form" class="input-form">
   <div class="answer-box">
-    <textarea id="input" autofocus autocomplete="off" rows=3></textarea>
+    <textarea id="input" autofocus autocomplete="off" rows=3 placeholder="Enter your answer"></textarea>
     <span id="correct-answer">&nbsp</span>
   </div>
-  <input type="submit" class="submit-button" value="⏎" />
+  <div class="input-area">
+    <input type="submit" class="submit-button" value="⏎" />
+    <span id="answer-state">&nbsp</span>
+  </div>
 </form>
-
-<p id="result" class="result">
-  <span id="answer-state">&nbsp</span>
-</p>
 `;
 
 export class AutoRater {
