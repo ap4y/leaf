@@ -99,6 +99,25 @@ describe("auto rater", () => {
     );
   });
 
+  test("mistake diff - unicode space", async () => {
+    const reviewSession = new ReviewSession();
+    reviewSession.session = session;
+    reviewSession.resolveAnswer = () => ({
+      answer: "こわれる to break"
+    });
+
+    reviewSession.advanceSession = () => {};
+
+    const el = reviewSession.element;
+    el.querySelector("#input").value = "きわれる　to break";
+    el.querySelector("#input-form").onsubmit({ preventDefault: () => {} });
+    await new Promise(resolve => window.setTimeout(resolve, 100));
+    expect(el.querySelector("#correct-answer").innerHTML).toEqual(
+      '<span class="input-mistake">き</span>' +
+        '<span class="input-correct">こ</span>われる　to break'
+    );
+  });
+
   test("submit correct", async () => {
     const reviewSession = new ReviewSession();
     reviewSession.session = session;

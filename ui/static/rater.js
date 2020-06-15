@@ -74,8 +74,11 @@ export class AutoRater {
 
     for (let i = 1; i <= input.length; i++) {
       for (let j = 1; j <= correct.length; j++) {
+        const isCorrect = correct[j - 1] === input[i - 1];
+        const isCorrectWhitespace =
+          correct[j - 1].match(/\s/) && input[i - 1].match(/\s/);
         matrix[i][j] =
-          correct[j - 1] === input[i - 1]
+          isCorrect || isCorrectWhitespace
             ? matrix[i - 1][j - 1]
             : Math.min(
                 matrix[i - 1][j - 1] + 1,
