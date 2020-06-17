@@ -59,6 +59,7 @@ Both commands expect deck name after the command name. Full example:
 :RATER:      auto
 :ALGORITHM:  sm2+c
 :PER_REVIEW: 20
+:SIDES:      answer
 :END:
 ** Question 1
 Answer 1
@@ -80,6 +81,8 @@ parameters. Following parameters are supported:
 - ~RATER~ defines which rating system will be used for
   reviews. Defaults to ~auto~, supported values: ~auto~ and ~self~.
 - ~PER_REVIEW~ is a maximum amount of cards per review session.
+- ~SIDES~ is an optional field that defines names of the card sides,
+  used in the UI for placeholders.
 
 Spaced repetition variables are stored in a separate file in a binary
 database. You can edit deck files at any time and changes will be

@@ -3,6 +3,7 @@
 :RATER:      self
 :ALGORITHM:  ebisu
 :PER_REVIEW: 40
+:SIDES:      org-sample something-else
 :END:
 ** /emphasis/
 /emphasis/

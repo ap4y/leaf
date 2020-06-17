@@ -18,6 +18,18 @@ const (
 	OutputFormatOrg OutputFormat = iota
 	// OutputFormatHTML defines html output.
 	OutputFormatHTML
+
+	// DeckPropertyRater defines deck's org-mode property for the rater
+	DeckPropertyRater = "RATER"
+	// DeckPropertyAlgorithm defines deck's org-mode property for the
+	// algorithm
+	DeckPropertyAlgorithm = "ALGORITHM"
+	// DeckPropertyPerReview defines deck's org-mode property for the
+	// per review amount
+	DeckPropertyPerReview = "PER_REVIEW"
+	// DeckPropertySides defines deck's org-mode property for the side
+	// names
+	DeckPropertySides = "SIDES"
 )
 
 // Card represents a single card in a Deck. Each card may have
@@ -40,6 +52,7 @@ type Deck struct {
 	Algorithm  SRS
 	RatingType RatingType
 	PerReview  int
+	Sides      []string
 
 	format   OutputFormat
 	modtime  time.Time
@@ -110,16 +123,19 @@ func (deck *Deck) load(f *os.File) error {
 	deck.RatingType = RatingTypeAuto
 	deck.PerReview = 20
 	if root.Properties != nil {
-		if rater, success := root.Properties.Get("RATER"); success {
+		if rater, success := root.Properties.Get(DeckPropertyRater); success {
 			deck.RatingType = RatingType(rater)
 		}
-		if algo, success := root.Properties.Get("ALGORITHM"); success {
+		if algo, success := root.Properties.Get(DeckPropertyAlgorithm); success {
 			deck.Algorithm = SRS(algo)
 		}
-		if count, success := root.Properties.Get("PER_REVIEW"); success {
+		if count, success := root.Properties.Get(DeckPropertyPerReview); success {
 			if c, err := strconv.Atoi(count); err == nil {
 				deck.PerReview = c
 			}
+		}
+		if sides, success := root.Properties.Get(DeckPropertySides); success {
+			deck.Sides = strings.Fields(sides)
 		}
 	}
 

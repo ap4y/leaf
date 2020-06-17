@@ -18,6 +18,7 @@ func TestDeck(t *testing.T) {
 		assert.Equal(t, RatingTypeAuto, deck.RatingType)
 		assert.Equal(t, SRSSupermemo2PlusCustom, string(deck.Algorithm))
 		assert.Equal(t, 20, deck.PerReview)
+		assert.Nil(t, deck.Sides)
 		require.Len(t, deck.Cards, 46)
 
 		cards := deck.Cards
@@ -32,6 +33,7 @@ func TestDeck(t *testing.T) {
 		assert.Equal(t, RatingTypeSelf, deck.RatingType)
 		assert.Equal(t, SRSEbisu, string(deck.Algorithm))
 		assert.Equal(t, 40, deck.PerReview)
+		assert.Equal(t, []string{"org-sample", "something-else"}, deck.Sides)
 		require.Len(t, deck.Cards, 10)
 
 		cards := deck.Cards
