@@ -52,7 +52,7 @@ export default class ReviewSession {
   }
 
   _updateState() {
-    const { question, total, left, rating_type } = this._session;
+    const { question, total, left, rating_type, sides } = this._session;
 
     if (left === 0) {
       window.history.back();
@@ -69,7 +69,7 @@ export default class ReviewSession {
     } else {
       session.replaceChild(rater.element, session.lastChild);
     }
-    rater.showQuestion(this._session);
+    rater.showQuestion(sides);
   }
 
   async _handleRater(rater, score) {

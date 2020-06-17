@@ -36,13 +36,17 @@ export class AutoRater {
     this._onSubmit = callback;
   }
 
-  showQuestion() {
+  showQuestion(sides) {
     this._el.querySelector("#answer-state").innerHTML = "&nbsp";
     this._el.querySelector("#correct-answer").innerHTML = "&nbsp";
     this._el.querySelector("#correct-answer").style.zIndex = -1;
 
     const input = this._el.querySelector("#input");
     input.value = "";
+    input.placeholder = `Enter your answer${
+      sides && sides.length > 0 ? ": " + sides.join(" ") : ""
+    }`;
+
     input.focus();
   }
 

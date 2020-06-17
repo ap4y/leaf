@@ -19,6 +19,20 @@ describe("auto rater", () => {
     expect(el.querySelector("#progress").innerHTML).toEqual("5/10");
     expect(el.querySelector("#answer-state").innerHTML).toEqual("&nbsp;");
     expect(el.querySelector("#correct-answer").innerHTML).toEqual("&nbsp;");
+    expect(el.querySelector("#input").placeholder).toEqual("Enter your answer");
+  });
+
+  test("render - sides", () => {
+    const reviewSession = new ReviewSession();
+    expect(reviewSession.element).not.toBeNull();
+
+    reviewSession.deck = "Test";
+    reviewSession.session = { ...session, sides: ["reading", "meaning"] };
+
+    const el = reviewSession.element;
+    expect(el.querySelector("#input").placeholder).toEqual(
+      "Enter your answer: reading meaning"
+    );
   });
 
   test("submit incorrect", async () => {
