@@ -36,6 +36,7 @@ func TestDeckManager(t *testing.T) {
 		session, err := dm.ReviewSession("Hiragana")
 		require.NoError(t, err)
 		assert.Equal(t, 20, session.Total())
+		assert.Equal(t, []string{"for-tests"}, session.Sides())
 
 		question := session.Next()
 		require.NoError(t, session.Again())

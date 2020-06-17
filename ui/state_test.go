@@ -14,7 +14,7 @@ func TestSessionState(t *testing.T) {
 	}
 
 	stats := make(map[string]*leaf.Stats)
-	s := leaf.NewReviewSession(cards, leaf.RatingTypeAuto, func(card *leaf.CardWithStats) error {
+	s := leaf.NewReviewSession(cards, []string{"answer"}, leaf.RatingTypeAuto, func(card *leaf.CardWithStats) error {
 		stats[card.Question] = card.Stats
 		return nil
 	})
@@ -25,6 +25,7 @@ func TestSessionState(t *testing.T) {
 		assert.Equal(t, 2, state.Left)
 		assert.Equal(t, "foo", state.Question)
 		assert.Equal(t, 3, state.AnswerLen)
+		assert.Equal(t, []string{"answer"}, state.Sides)
 	})
 
 	t.Run("ResolveAnswer", func(t *testing.T) {
@@ -52,7 +53,7 @@ func TestSessionStateUnicode(t *testing.T) {
 	}
 
 	stats := make(map[string]*leaf.Stats)
-	s := leaf.NewReviewSession(cards, leaf.RatingTypeAuto, func(card *leaf.CardWithStats) error {
+	s := leaf.NewReviewSession(cards, nil, leaf.RatingTypeAuto, func(card *leaf.CardWithStats) error {
 		stats[card.Question] = card.Stats
 		return nil
 	})

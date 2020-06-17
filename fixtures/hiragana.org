@@ -1,4 +1,7 @@
 * Hiragana
+:PROPERTIES:
+:SIDES: for-tests
+:END:
 ** あ
 a
 ** い

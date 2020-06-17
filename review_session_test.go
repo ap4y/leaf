@@ -14,9 +14,13 @@ func TestReviewSession(t *testing.T) {
 	}
 
 	stats := make(map[string]*Stats)
-	s := NewReviewSession(cards, RatingTypeAuto, func(card *CardWithStats) error {
+	s := NewReviewSession(cards, []string{"answer"}, RatingTypeAuto, func(card *CardWithStats) error {
 		stats[card.Question] = card.Stats
 		return nil
+	})
+
+	t.Run("Sides", func(t *testing.T) {
+		assert.Equal(t, []string{"answer"}, s.Sides())
 	})
 
 	t.Run("StartedAt", func(t *testing.T) {

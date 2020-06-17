@@ -11,6 +11,7 @@ type SessionState struct {
 	Question   string          `json:"question"`
 	AnswerLen  int             `json:"answer_length"`
 	RatingType leaf.RatingType `json:"rating_type"`
+	Sides      []string        `json:"sides"`
 
 	session *leaf.ReviewSession
 	rater   leaf.Rater
@@ -31,6 +32,7 @@ func NewSessionState(session *leaf.ReviewSession) *SessionState {
 		Question:   session.Next(),
 		AnswerLen:  len([]rune(session.CorrectAnswer())),
 		RatingType: session.RatingType(),
+		Sides:      session.Sides(),
 		session:    session,
 		rater:      rater,
 	}

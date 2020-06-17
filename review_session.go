@@ -13,6 +13,7 @@ type ReviewSession struct {
 	statsSaver StatsSaveFunc
 	cards      []CardWithStats
 	queue      []string
+	sides      []string
 	startedAt  time.Time
 	ratingType RatingType
 }
@@ -20,13 +21,18 @@ type ReviewSession struct {
 // NewReviewSession constructs a new ReviewSession for a given set of cards.
 // Rating calculation will be performed using provided rater.
 // Provided StatsSaveFunc will be used for stats updates post review.
-func NewReviewSession(cards []CardWithStats, rt RatingType, statsSaver StatsSaveFunc) *ReviewSession {
+func NewReviewSession(cards []CardWithStats, sides []string, rt RatingType, statsSaver StatsSaveFunc) *ReviewSession {
 	queue := make([]string, len(cards))
 	for idx, card := range cards {
 		queue[idx] = card.Question
 	}
 
-	return &ReviewSession{statsSaver, cards, queue, time.Now(), rt}
+	return &ReviewSession{statsSaver, cards, queue, sides, time.Now(), rt}
+}
+
+// Sides returns side names from the reviewed deck.
+func (s *ReviewSession) Sides() []string {
+	return s.sides
 }
 
 // StartedAt returns start time of the review session.

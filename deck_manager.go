@@ -77,7 +77,7 @@ func (dm DeckManager) ReviewSession(deckName string) (*ReviewSession, error) {
 		return nil, err
 	}
 
-	return NewReviewSession(cards, deck.RatingType, func(card *CardWithStats) error {
+	return NewReviewSession(cards, deck.Sides, deck.RatingType, func(card *CardWithStats) error {
 		return dm.db.SaveStats(deckName, card.Question, card.Stats)
 	}), nil
 }
